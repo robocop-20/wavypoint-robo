@@ -1,0 +1,200 @@
+<svg viewBox="0 0 1200 1800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .box { fill: #E3F2FD; stroke: #1976D2; stroke-width: 2; }
+      .decision { fill: #FFF9C4; stroke: #F57F17; stroke-width: 2; }
+      .process { fill: #E8F5E9; stroke: #388E3C; stroke-width: 2; }
+      .start-end { fill: #FFEBEE; stroke: #C62828; stroke-width: 2; }
+      .text { font-family: Arial, sans-serif; font-size: 12px; text-anchor: middle; }
+      .title { font-size: 14px; font-weight: bold; }
+      .arrow { stroke: #333; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+      .label { font-size: 11px; fill: #555; }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#333" />
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="600" y="25" class="text" style="font-size: 18px; font-weight: bold;">GPS/Compass Navigation Robot - Flow Diagram</text>
+
+  <!-- START -->
+  <circle cx="600" cy="60" r="25" class="start-end"/>
+  <text x="600" y="65" class="text title">START</text>
+
+  <!-- Arrow -->
+  <path d="M 600 85 L 600 120" class="arrow"/>
+
+  <!-- Initialize Hardware -->
+  <rect x="450" y="120" width="300" height="70" class="box" rx="5"/>
+  <text x="600" y="145" class="text title">Initialize Hardware</text>
+  <text x="600" y="162" class="text">Serial, BT, GPS, Compass, Motors</text>
+  <text x="600" y="177" class="text">Configure PRIZM, QMC5883P</text>
+
+  <path d="M 600 190 L 600 230" class="arrow"/>
+
+  <!-- Configure GPS -->
+  <rect x="450" y="230" width="300" height="60" class="box" rx="5"/>
+  <text x="600" y="255" class="text title">Configure GPS 5Hz</text>
+  <text x="600" y="272" class="text">Send UBLOX_INIT sequence</text>
+
+  <path d="M 600 290 L 600 330" class="arrow"/>
+
+  <!-- Calibrate Compass -->
+  <rect x="450" y="330" width="300" height="80" class="box" rx="5"/>
+  <text x="600" y="355" class="text title">Calibrate Compass</text>
+  <text x="600" y="372" class="text">Spin 10 seconds, measure Min/Max</text>
+  <text x="600" y="389" class="text">Calculate Hard Iron Offsets (X, Y)</text>
+
+  <path d="M 600 410 L 600 450" class="arrow"/>
+
+  <!-- Get Initial Heading -->
+  <rect x="450" y="450" width="300" height="60" class="process" rx="5"/>
+  <text x="600" y="475" class="text title">Get Initial Heading</text>
+  <text x="600" y="492" class="text">Print Ready Status</text>
+
+  <path d="M 600 510 L 600 550" class="arrow"/>
+
+  <!-- MAIN LOOP START -->
+  <rect x="450" y="550" width="300" height="50" class="box" rx="5" style="stroke-dasharray: 5,5;"/>
+  <text x="600" y="580" class="text title">MAIN LOOP START</text>
+
+  <path d="M 600 600 L 600 640" class="arrow"/>
+
+  <!-- Check Bluetooth -->
+  <polygon points="600,640 700,680 600,720 500,680" class="decision"/>
+  <text x="600" y="682" class="text title">BT Command?</text>
+  <text x="600" y="697" class="text">(Check for S)</text>
+
+  <!-- Yes branch -->
+  <path d="M 700 680 L 800 680" class="arrow"/>
+  <text x="750" y="675" class="label">YES</text>
+  <rect x="800" y="660" width="150" height="40" class="process" rx="5"/>
+  <text x="875" y="685" class="text">Stop Navigation</text>
+
+  <!-- Path to decision -->
+  <path d="M 875 660 L 875 600 L 600 600" class="arrow"/>
+
+  <!-- No branch -->
+  <path d="M 600 720 L 600 760" class="arrow"/>
+  <text x="620" y="745" class="label">NO</text>
+
+  <!-- Navigation Active Decision -->
+  <polygon points="600,760 700,800 600,840 500,800" class="decision"/>
+  <text x="600" y="805" class="text title">Navigation</text>
+  <text x="600" y="820" class="text">Active?</text>
+
+  <!-- False branch - loop back -->
+  <path d="M 500 800 L 300 800 L 300 575 L 450 575" class="arrow"/>
+  <text x="350" y="795" class="label">FALSE</text>
+
+  <!-- True branch -->
+  <path d="M 600 840 L 600 880" class="arrow"/>
+  <text x="620" y="860" class="label">TRUE</text>
+
+  <!-- Read GPS -->
+  <rect x="450" y="880" width="300" height="50" class="process" rx="5"/>
+  <text x="600" y="905" class="text title">Read GPS Serial Data</text>
+  <text x="600" y="920" class="text">Parse location updates</text>
+
+  <path d="M 600 930 L 600 970" class="arrow"/>
+
+  <!-- Update Encoder -->
+  <rect x="450" y="970" width="300" height="50" class="process" rx="5"/>
+  <text x="600" y="995" class="text title">Update Encoder Delta</text>
+  <text x="600" y="1010" class="text">(if not PURE_COMPASS_MODE)</text>
+
+  <path d="M 600 1020 L 600 1060" class="arrow"/>
+
+  <!-- GPS Updated Decision -->
+  <polygon points="600,1060 700,1100 600,1140 500,1100" class="decision"/>
+  <text x="600" y="1105" class="text title">GPS Updated?</text>
+
+  <!-- No - loop back -->
+  <path d="M 700 1100 L 800 1100 L 800 575 L 700 575" class="arrow"/>
+  <text x="750" y="1095" class="label">NO</text>
+
+  <!-- Yes - continue -->
+  <path d="M 600 1140 L 600 1180" class="arrow"/>
+  <text x="620" y="1160" class="label">YES</text>
+
+  <!-- GPS Processing -->
+  <rect x="400" y="1180" width="400" height="100" class="box" rx="5"/>
+  <text x="600" y="1200" class="text title">GPS Data Processing</text>
+  <text x="600" y="1218" class="text">Apply EMA Smoothing to coordinates</text>
+  <text x="600" y="1236" class="text">Calculate distance to waypoint</text>
+  <text x="600" y="1254" class="text">Update compass heading reading</text>
+
+  <path d="M 600 1280 L 600 1320" class="arrow"/>
+
+  <!-- Auto-Offset Learning -->
+  <rect x="350" y="1320" width="500" height="100" class="box" rx="5"/>
+  <text x="600" y="1340" class="text title">Auto-Offset Learning Algorithm</text>
+  <text x="600" y="1358" class="text">IF speed above 3 km/h: GPS Course is TRUE</text>
+  <text x="600" y="1376" class="text">Calculate offset error, snap or converge 5 percent</text>
+  <text x="600" y="1394" class="text">Update dynamic boresight offset</text>
+
+  <path d="M 600 1420 L 600 1460" class="arrow"/>
+
+  <!-- Select Heading Source -->
+  <rect x="450" y="1460" width="300" height="60" class="process" rx="5"/>
+  <text x="600" y="1485" class="text title">Select Heading Source</text>
+  <text x="600" y="1502" class="text">Pure compass or hybrid mode</text>
+
+  <path d="M 600 1520 L 600 1560" class="arrow"/>
+
+  <!-- Calculate Error -->
+  <rect x="450" y="1560" width="300" height="50" class="process" rx="5"/>
+  <text x="600" y="1585" class="text title">Calculate Heading Error</text>
+  <text x="600" y="1600" class="text">Shortest rotation to target</text>
+
+  <path d="M 600 1610 L 600 1650" class="arrow"/>
+
+  <!-- Print Debug -->
+  <rect x="450" y="1650" width="300" height="60" class="process" rx="5"/>
+  <text x="600" y="1670" class="text title">Print Debug Telemetry</text>
+  <text x="600" y="1687" class="text">Heading, GPS course, offset, error</text>
+
+  <path d="M 600 1710 L 600 1750" class="arrow"/>
+
+  <!-- Distance Check -->
+  <polygon points="600,1750 700,1790 600,1830 500,1790" class="decision"/>
+  <text x="600" y="1795" class="text title">Distance less</text>
+  <text x="600" y="1810" class="text">than 5 meters?</text>
+
+  <!-- YES - Waypoint Reached -->
+  <path d="M 700 1790 L 900 1790" class="arrow"/>
+  <text x="800" y="1785" class="label">YES</text>
+
+  <rect x="900" y="1755" width="250" height="70" class="process" rx="5"/>
+  <text x="1025" y="1777" class="text">Stop Motors</text>
+  <text x="1025" y="1795" class="text">Move to Next Waypoint</text>
+
+  <path d="M 1025 1755 L 1025 600 L 700 600" class="arrow"/>
+
+  <!-- NO - Execute Movement -->
+  <path d="M 600 1830 L 600 1870" class="arrow"/>
+  <text x="620" y="1850" class="label">NO</text>
+
+  <!-- Movement Decision -->
+  <polygon points="600,1870 700,1910 600,1950 500,1910" class="decision"/>
+  <text x="600" y="1912" class="text">Error above 25</text>
+  <text x="600" y="1925" class="text">degrees?</text>
+
+  <!-- Turn -->
+  <path d="M 700 1910 L 850 1910" class="arrow"/>
+  <text x="775" y="1905" class="label">YES</text>
+  <rect x="850" y="1890" width="180" height="40" class="process" rx="5"/>
+  <text x="940" y="1915" class="text">TURN Speed 45</text>
+
+  <!-- Cruise -->
+  <path d="M 500 1910 L 350 1910" class="arrow"/>
+  <text x="420" y="1905" class="label">NO</text>
+  <rect x="100" y="1890" width="250" height="40" class="process" rx="5"/>
+  <text x="225" y="1915" class="text">CRUISE and STEER Kp 2.0</text>
+
+  <!-- Converge back -->
+  <path d="M 940 1890 L 940 580 L 700 580" class="arrow"/>
+  <path d="M 225 1890 L 225 580 L 500 580" class="arrow"/>
+
+</svg>
