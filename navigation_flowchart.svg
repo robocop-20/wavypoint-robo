@@ -1,0 +1,215 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 2800" width="100%">
+
+<!-- TITLE -->
+<text x="500" y="30" font-size="24" font-weight="bold" text-anchor="middle">GPS/COMPASS NAVIGATION ROBOT</text>
+
+<!-- START -->
+<circle cx="500" cy="80" r="30" fill="#FFE0E0" stroke="#CC0000" stroke-width="2"/>
+<text x="500" y="88" font-size="14" font-weight="bold" text-anchor="middle">START</text>
+
+<!-- Arrow 1 -->
+<line x1="500" y1="110" x2="500" y2="150" stroke="#000" stroke-width="2"/>
+
+<!-- Box 1 -->
+<rect x="350" y="150" width="300" height="80" fill="#E3F2FD" stroke="#1976D2" stroke-width="2" rx="5"/>
+<text x="500" y="175" font-size="13" font-weight="bold" text-anchor="middle">1. Initialize Hardware</text>
+<text x="500" y="195" font-size="12" text-anchor="middle">Serial, Bluetooth, GPS, Compass</text>
+<text x="500" y="210" font-size="12" text-anchor="middle">Motors (PRIZM)</text>
+
+<!-- Arrow 2 -->
+<line x1="500" y1="230" x2="500" y2="270" stroke="#000" stroke-width="2"/>
+
+<!-- Box 2 -->
+<rect x="350" y="270" width="300" height="70" fill="#E3F2FD" stroke="#1976D2" stroke-width="2" rx="5"/>
+<text x="500" y="295" font-size="13" font-weight="bold" text-anchor="middle">2. Configure GPS to 5Hz</text>
+<text x="500" y="315" font-size="12" text-anchor="middle">Send UBLOX_INIT</text>
+
+<!-- Arrow 3 -->
+<line x1="500" y1="340" x2="500" y2="380" stroke="#000" stroke-width="2"/>
+
+<!-- Box 3 -->
+<rect x="300" y="380" width="400" height="100" fill="#E3F2FD" stroke="#1976D2" stroke-width="2" rx="5"/>
+<text x="500" y="410" font-size="13" font-weight="bold" text-anchor="middle">3. Calibrate Compass</text>
+<text x="500" y="430" font-size="12" text-anchor="middle">Spin 360° for 10 seconds</text>
+<text x="500" y="450" font-size="12" text-anchor="middle">Calculate Hard Iron Offsets</text>
+
+<!-- Arrow 4 -->
+<line x1="500" y1="480" x2="500" y2="520" stroke="#000" stroke-width="2"/>
+
+<!-- Box 4 -->
+<rect x="350" y="520" width="300" height="80" fill="#D4EDDA" stroke="#28A745" stroke-width="2" rx="5"/>
+<text x="500" y="545" font-size="13" font-weight="bold" text-anchor="middle">4. Get Initial Heading</text>
+<text x="500" y="565" font-size="12" text-anchor="middle">Print Ready Status</text>
+
+<!-- Arrow 5 -->
+<line x1="500" y1="600" x2="500" y2="640" stroke="#000" stroke-width="2"/>
+
+<!-- Main Loop Box -->
+<rect x="350" y="640" width="300" height="60" fill="#FFF9E6" stroke="#FF9800" stroke-width="2" stroke-dasharray="5,5" rx="5"/>
+<text x="500" y="670" font-size="13" font-weight="bold" text-anchor="middle">⚙️ MAIN LOOP</text>
+
+<!-- Arrow 6 -->
+<line x1="500" y1="700" x2="500" y2="740" stroke="#000" stroke-width="2"/>
+
+<!-- Diamond 1: BT Command -->
+<polygon points="500,740 580,790 500,840 420,790" fill="#FFFACD" stroke="#FFA500" stroke-width="2"/>
+<text x="500" y="795" font-size="12" font-weight="bold" text-anchor="middle">Bluetooth</text>
+<text x="500" y="810" font-size="12" font-weight="bold" text-anchor="middle">Command?</text>
+
+<!-- YES branch to Stop -->
+<line x1="580" y1="790" x2="700" y2="790" stroke="#000" stroke-width="2"/>
+<text x="640" y="780" font-size="11" font-weight="bold">YES</text>
+<rect x="700" y="755" width="150" height="70" fill="#D4EDDA" stroke="#28A745" stroke-width="2" rx="5"/>
+<text x="775" y="780" font-size="12" font-weight="bold" text-anchor="middle">Stop</text>
+<text x="775" y="795" font-size="12" font-weight="bold" text-anchor="middle">Motors</text>
+
+<!-- Arrow back from stop -->
+<line x1="775" y1="755" x2="775" y2="600" stroke="#000" stroke-width="2"/>
+<line x1="775" y1="600" x2="650" y2="600" stroke="#000" stroke-width="2"/>
+
+<!-- NO -->
+<line x1="500" y1="840" x2="500" y2="880" stroke="#000" stroke-width="2"/>
+<text x="520" y="860" font-size="11" font-weight="bold">NO</text>
+
+<!-- Diamond 2: Nav Active -->
+<polygon points="500,880 580,930 500,980 420,930" fill="#FFFACD" stroke="#FFA500" stroke-width="2"/>
+<text x="500" y="930" font-size="12" font-weight="bold" text-anchor="middle">Navigation</text>
+<text x="500" y="945" font-size="12" font-weight="bold" text-anchor="middle">Active?</text>
+
+<!-- Loop back if FALSE -->
+<line x1="420" y1="930" x2="250" y2="930" stroke="#000" stroke-width="2"/>
+<line x1="250" y1="930" x2="250" y2="670" stroke="#000" stroke-width="2"/>
+<line x1="250" y1="670" x2="350" y2="670" stroke="#000" stroke-width="2"/>
+<text x="270" y="925" font-size="11" font-weight="bold">FALSE</text>
+
+<!-- YES -->
+<line x1="500" y1="980" x2="500" y2="1020" stroke="#000" stroke-width="2"/>
+<text x="520" y="1000" font-size="11" font-weight="bold">YES</text>
+
+<!-- Box 5: Read GPS -->
+<rect x="350" y="1020" width="300" height="80" fill="#D4EDDA" stroke="#28A745" stroke-width="2" rx="5"/>
+<text x="500" y="1045" font-size="13" font-weight="bold" text-anchor="middle">5. Read GPS Data</text>
+<text x="500" y="1065" font-size="12" text-anchor="middle">Parse Location Updates</text>
+
+<!-- Arrow -->
+<line x1="500" y1="1100" x2="500" y2="1140" stroke="#000" stroke-width="2"/>
+
+<!-- Box 6: Encoder -->
+<rect x="350" y="1140" width="300" height="80" fill="#D4EDDA" stroke="#28A745" stroke-width="2" rx="5"/>
+<text x="500" y="1165" font-size="13" font-weight="bold" text-anchor="middle">6. Update Encoder</text>
+<text x="500" y="1185" font-size="12" text-anchor="middle">(if not PURE_COMPASS)</text>
+
+<!-- Arrow -->
+<line x1="500" y1="1220" x2="500" y2="1260" stroke="#000" stroke-width="2"/>
+
+<!-- Diamond 3: GPS Updated -->
+<polygon points="500,1260 580,1310 500,1360 420,1310" fill="#FFFACD" stroke="#FFA500" stroke-width="2"/>
+<text x="500" y="1310" font-size="12" font-weight="bold" text-anchor="middle">GPS Updated?</text>
+
+<!-- NO loop back -->
+<line x1="580" y1="1310" x2="700" y2="1310" stroke="#000" stroke-width="2"/>
+<line x1="700" y1="1310" x2="700" y2="670" stroke="#000" stroke-width="2"/>
+<line x1="700" y1="670" x2="650" y2="670" stroke="#000" stroke-width="2"/>
+<text x="640" y="1305" font-size="11" font-weight="bold">NO</text>
+
+<!-- YES -->
+<line x1="500" y1="1360" x2="500" y2="1400" stroke="#000" stroke-width="2"/>
+<text x="520" y="1380" font-size="11" font-weight="bold">YES</text>
+
+<!-- Box 7: GPS Processing -->
+<rect x="280" y="1400" width="440" height="100" fill="#E3F2FD" stroke="#1976D2" stroke-width="2" rx="5"/>
+<text x="500" y="1425" font-size="13" font-weight="bold" text-anchor="middle">7. GPS Processing</text>
+<text x="500" y="1445" font-size="12" text-anchor="middle">Get Lat/Lon, Apply EMA Smoothing</text>
+<text x="500" y="1465" font-size="12" text-anchor="middle">Calculate Distance & Bearing</text>
+
+<!-- Arrow -->
+<line x1="500" y1="1500" x2="500" y2="1540" stroke="#000" stroke-width="2"/>
+
+<!-- Box 8: Compass Update -->
+<rect x="350" y="1540" width="300" height="80" fill="#D4EDDA" stroke="#28A745" stroke-width="2" rx="5"/>
+<text x="500" y="1565" font-size="13" font-weight="bold" text-anchor="middle">8. Update Compass</text>
+<text x="500" y="1585" font-size="12" text-anchor="middle">Every 100ms (10Hz)</text>
+
+<!-- Arrow -->
+<line x1="500" y1="1620" x2="500" y2="1660" stroke="#000" stroke-width="2"/>
+
+<!-- Box 9: Auto-Offset -->
+<rect x="250" y="1660" width="500" height="120" fill="#FFE6E6" stroke="#CC0000" stroke-width="2" rx="5"/>
+<text x="500" y="1690" font-size="13" font-weight="bold" text-anchor="middle" fill="#CC0000">⭐ AUTO-OFFSET LEARNING ⭐</text>
+<text x="500" y="1710" font-size="11" text-anchor="middle">IF GPS Speed > 3 km/h:</text>
+<text x="500" y="1725" font-size="11" text-anchor="middle">Calculate offset, Snap or Converge (5%)</text>
+<text x="500" y="1740" font-size="11" text-anchor="middle">Update dynamic boresight offset</text>
+
+<!-- Arrow -->
+<line x1="500" y1="1780" x2="500" y2="1820" stroke="#000" stroke-width="2"/>
+
+<!-- Box 10: Select Heading -->
+<rect x="350" y="1820" width="300" height="80" fill="#D4EDDA" stroke="#28A745" stroke-width="2" rx="5"/>
+<text x="500" y="1845" font-size="13" font-weight="bold" text-anchor="middle">9. Select Heading</text>
+<text x="500" y="1865" font-size="12" text-anchor="middle">Pure or Hybrid Mode?</text>
+
+<!-- Arrow -->
+<line x1="500" y1="1900" x2="500" y2="1940" stroke="#000" stroke-width="2"/>
+
+<!-- Box 11: Calculate Error -->
+<rect x="350" y="1940" width="300" height="80" fill="#D4EDDA" stroke="#28A745" stroke-width="2" rx="5"/>
+<text x="500" y="1965" font-size="13" font-weight="bold" text-anchor="middle">10. Heading Error</text>
+<text x="500" y="1985" font-size="12" text-anchor="middle">Find Shortest Rotation</text>
+
+<!-- Arrow -->
+<line x1="500" y1="2020" x2="500" y2="2060" stroke="#000" stroke-width="2"/>
+
+<!-- Box 12: Print Debug -->
+<rect x="350" y="2060" width="300" height="80" fill="#D4EDDA" stroke="#28A745" stroke-width="2" rx="5"/>
+<text x="500" y="2085" font-size="13" font-weight="bold" text-anchor="middle">11. Print Debug</text>
+<text x="500" y="2105" font-size="12" text-anchor="middle">Heading, GPS, Offset, Error</text>
+
+<!-- Arrow -->
+<line x1="500" y1="2140" x2="500" y2="2180" stroke="#000" stroke-width="2"/>
+
+<!-- Diamond 4: Distance -->
+<polygon points="500,2180 580,2230 500,2280 420,2230" fill="#FFFACD" stroke="#FFA500" stroke-width="2"/>
+<text x="500" y="2235" font-size="12" font-weight="bold" text-anchor="middle">Dist < 5m?</text>
+
+<!-- YES - Next waypoint -->
+<line x1="580" y1="2230" x2="700" y2="2230" stroke="#000" stroke-width="2"/>
+<text x="640" y="2220" font-size="11" font-weight="bold">YES</text>
+<rect x="700" y="2195" width="150" height="70" fill="#D4EDDA" stroke="#28A745" stroke-width="2" rx="5"/>
+<text x="775" y="2220" font-size="12" font-weight="bold" text-anchor="middle">Next</text>
+<text x="775" y="2235" font-size="12" font-weight="bold" text-anchor="middle">Waypoint</text>
+
+<!-- Loop back from waypoint -->
+<line x1="775" y1="2195" x2="775" y2="670" stroke="#000" stroke-width="2"/>
+<line x1="775" y1="670" x2="650" y2="670" stroke="#000" stroke-width="2"/>
+
+<!-- NO - Execute Movement -->
+<line x1="500" y1="2280" x2="500" y2="2320" stroke="#000" stroke-width="2"/>
+<text x="520" y="2300" font-size="11" font-weight="bold">NO</text>
+
+<!-- Diamond 5: Heading Error -->
+<polygon points="500,2320 580,2370 500,2420 420,2370" fill="#FFFACD" stroke="#FFA500" stroke-width="2"/>
+<text x="500" y="2375" font-size="12" font-weight="bold" text-anchor="middle">Error > 25°?</text>
+
+<!-- YES - TURN -->
+<line x1="580" y1="2370" x2="700" y2="2370" stroke="#000" stroke-width="2"/>
+<text x="640" y="2360" font-size="11" font-weight="bold">YES</text>
+<rect x="700" y="2335" width="150" height="70" fill="#D4EDDA" stroke="#28A745" stroke-width="2" rx="5"/>
+<text x="775" y="2360" font-size="12" font-weight="bold" text-anchor="middle">TURN</text>
+<text x="775" y="2375" font-size="12" font-weight="bold" text-anchor="middle">Speed: 45</text>
+
+<!-- Loop back from turn -->
+<line x1="775" y1="2335" x2="775" y2="670" stroke="#000" stroke-width="2"/>
+<line x1="775" y1="670" x2="650" y2="670" stroke="#000" stroke-width="2"/>
+
+<!-- NO - CRUISE -->
+<line x1="420" y1="2370" x2="250" y2="2370" stroke="#000" stroke-width="2"/>
+<text x="310" y="2360" font-size="11" font-weight="bold">NO</text>
+<rect x="80" y="2335" width="170" height="70" fill="#D4EDDA" stroke="#28A745" stroke-width="2" rx="5"/>
+<text x="165" y="2360" font-size="12" font-weight="bold" text-anchor="middle">CRUISE</text>
+<text x="165" y="2375" font-size="12" font-weight="bold" text-anchor="middle">Kp = 2.0</text>
+
+<!-- Loop back from cruise -->
+<line x1="165" y1="2335" x2="165" y2="670" stroke="#000" stroke-width="2"/>
+<line x1="165" y1="670" x2="350" y2="670" stroke="#000" stroke-width="2"/>
+
+</svg>
