@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPS/Compass Navigation Robot - Flowchart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .flowchart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        .box {
+            background-color: #E3F2FD;
+            border: 2px solid #1976D2;
+            padding: 15px 20px;
+            border-radius: 5px;
+            min-width: 400px;
+            text-align: center;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .process {
+            background-color: #D4EDDA;
+            border: 2px solid #28A745;
+        }
+        .decision {
+            background-color: #FFFACD;
+            border: 2px solid #FFA500;
+            padding: 20px;
+            min-width: 300px;
+            font-weight: bold;
+        }
+        .error {
+            background-color: #FFE6E6;
+            border: 2px solid #CC0000;
+            color: #CC0000;
+            font-weight: bold;
+        }
+        .start-end {
+            background-color: #FFE0E0;
+            border: 2px solid #CC0000;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .arrow {
+            font-size: 24px;
+            color: #333;
+        }
+        .section-title {
+            font-size: 12px;
+            color: #666;
+            margin: 20px 0 10px 0;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .description {
+            font-size: 13px;
+            color: #555;
+            line-height: 1.5;
+        }
+        .highlight {
+            background-color: #fff59d;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 GPS/Compass Navigation Robot - Flowchart</h1>
+        
+        <div class="flowchart">
+            <!-- START -->
+            <div class="start-end">START</div>
+            <div class="arrow">⬇️</div>
+
+            <!-- SETUP SECTION -->
+            <div class="section-title">Setup Phase</div>
+
+            <!-- Box 1 -->
+            <div class="box">
+                <strong>1. Initialize Hardware</strong><br>
+                <span class="description">Serial, Bluetooth, GPS, Compass<br>Motors (PRIZM), QMC5883P</span>
+            </div>
+            <div class="arrow">⬇️</div>
+
+            <!-- Box 2 -->
+            <div class="box">
+                <strong>2. Configure GPS to 5Hz</strong><br>
+                <span class="description">Send UBLOX_INIT Sequence</span>
+            </div>
+            <div class="arrow">⬇️</div>
+
+            <!-- Box 3 -->
+            <div class="box">
+                <strong>3. Calibrate Compass</strong><br>
+                <span class="description">Spin 360° for 10 seconds<br>Measure Min/Max, Calculate Hard Iron Offsets</span>
+            </div>
+            <div class="arrow">⬇️</div>
+
+            <!-- Box 4 -->
+            <div class="process box">
+                <strong>4. Get Initial Heading</strong><br>
+                <span class="description">Print "Ready. Auto-Align Active."</span>
+            </div>
+            <div class="arrow">⬇️</div>
+
+            <!-- MAIN LOOP SECTION -->
+            <div class="section-title">⚙️ Main Loop</div>
+
+            <div class="decision">
+                Bluetooth<br>Command?
+            </div>
+            <div style="font-size: 12px; color: #666;">
+                ├─ YES (S/s) → Stop Motors & Navigation ↩️
+                <br>
+                └─ NO ↓
+            </div>
+
+            <div class="decision">
+                Navigation<br>Active?
+            </div>
+            <div style="font-size: 12px; color: #666;">
+                ├─ FALSE → Loop Back ↩️
+                <br>
+                └─ TRUE ↓
+            </div>
+
+            <div class="arrow">⬇️</div>
+
+            <!-- Processing Section -->
+            <div class="section-title">GPS & Sensor Processing</div>
+
+            <div class="process box">
+                <strong>5. Read GPS Serial Data</strong><br>
+                <span class="description">gps.encode() - Parse Location Updates</span>
+            </div>
+            <div class="arrow">⬇️</div>
+
+            <div class="process box">
+                <strong>6. Update Encoder Delta</strong><br>
+                <span class="description">(if not PURE_COMPASS_MODE)</span>
+            </div>
+            <div class="arrow">⬇️</div>
+
+            <div class="decision">
+                GPS Location<br>Updated?
+            </div>
+            <div style="font-size: 12px; color: #666;">
+                ├─ NO → Loop Back ↩️
+                <br>
+                └─ YES ↓
+            </div>
+
+            <div class="arrow">⬇️</div>
+
+            <div class="box">
+                <strong>7. GPS Data Processing</strong><br>
+                <span class="description">Get Raw Lat/Lon<br>Apply EMA Smoothing (α=0.3)<br>Calculate Distance & Bearing to Waypoint</span>
+            </div>
+            <div class="arrow">⬇️</div>
+
+            <div class="process box">
+                <strong>8. Update Compass Heading</strong><br>
+                <span class="description">Every 100ms (10Hz Update Rate)</span>
+            </div>
+            <div class="arrow">⬇️</div>
+
+            <!-- AUTO-OFFSET LEARNING -->
+            <div class="error box" style="min-width: 500px;">
+                <strong>⭐ AUTO-OFFSET LEARNING ALGORITHM ⭐</strong><br>
+                <span class="description">
+                    <highlight>IF GPS Speed > 3 km/h:</highlight> GPS Course = TRUE<br>
+                    Calculate Offset Error (GPS vs Compass)<br>
+                    First Movement: SNAP offset<br>
+                    Later: Converge at 5% Learning Rate
+                </span>
+            </div>
+            <div class="arrow">⬇️</div>
+
+            <!-- Navigation Section -->
+            <div class="section-title">Navigation Control</div>
+
+            <div class="process box">
+                <strong>9. Select Heading Source</strong><br>
+                <span class="description">PURE_COMPASS_MODE or Hybrid?</span>
+            </div>
+            <div class="arrow">⬇️</div>
+
+            <div class="process box">
+                <strong>10. Calculate Heading Error</strong><br>
+                <span class="description">Find Shortest Rotation to Target Bearing</span>
+            </div>
+            <div class="arrow">⬇️</div>
+
+            <div class="process box">
+                <strong>11. Print Debug Telemetry</strong><br>
+                <span class="description">Heading | GPS Course | Dynamic Offset<br>Heading Error | Distance</span>
+            </div>
+            <div class="arrow">⬇️</div>
+
+            <!-- DECISION POINTS -->
+            <div class="decision">
+                Distance<br>&lt; 5m?
+            </div>
+            <div style="font-size: 12px; color: #666;">
+                ├─ YES → Next Waypoint ↩️
+                <br>
+                └─ NO ↓
+            </div>
+
+            <div class="arrow">⬇️</div>
+
+            <div class="decision">
+                Heading Error<br>&gt; 25°?
+            </div>
+            <div style="font-size: 12px; color: #666;">
+                ├─ YES → TURN IN PLACE (Speed 45) ↩️
+                <br>
+                └─ NO ↓
+            </div>
+
+            <div class="arrow">⬇️</div>
+
+            <div class="process box">
+                <strong>CRUISE + STEER</strong><br>
+                <span class="description">Proportional Control (Kp = 2.0)<br>Adjust motor power based on heading error</span>
+            </div>
+
+            <div class="arrow">⬇️ (Loop Back to GPS Read)</div>
+
+        </div>
+
+        <hr style="margin-top: 40px; border: none; border-top: 2px solid #ddd;">
+
+        <h2 style="margin-top: 40px;">📊 Key Components</h2>
+        <ul style="line-height: 2;">
+            <li><strong>Auto-Offset Learning:</strong> Compass automatically calibrates by comparing GPS course (when moving > 3 km/h) with magnetic heading</li>
+            <li><strong>GPS Smoothing:</strong> Exponential Moving Average (EMA) with α=0.3 reduces noise</li>
+            <li><strong>Navigation Loop:</strong> Runs at GPS update rate (~5Hz) with compass updates at 10Hz</li>
+            <li><strong>Motor Control:</strong> Proportional steering when heading error < 25°, otherwise pure rotation</li>
+            <li><strong>Waypoint Tracking:</strong> Advances to next waypoint when within 5 meters</li>
+        </ul>
+
+    </div>
+</body>
+</html>
