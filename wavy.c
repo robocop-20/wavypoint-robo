@@ -16,7 +16,7 @@
 
 // ==========================================
 
-const float COMPASS_OFFSET = 145;
+const float COMPASS_OFFSET = 0;
 
 const bool PURE_COMPASS_MODE = true;
 
