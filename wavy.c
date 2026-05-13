@@ -10,19 +10,12 @@
 
 #include <math.h>
 
-// ==========================================
-
-// === FINAL CALIBRATED OFFSET ===
-
-// ==========================================
+//  FINAL CALIBRATED OFFSET 
 
 const float COMPASS_OFFSET = 0;
 
 const bool PURE_COMPASS_MODE = true;
 
-// ==========================================
-
-// === Hardware ===
 
 #define LEFT_MOTOR 1
 
@@ -32,7 +25,7 @@ SoftwareSerial BT(2, 9);
 
 SoftwareSerial GPS_Serial(3, 4);
 
-// === Objects ===
+
 
 Adafruit_QMC5883P qmc;
 
@@ -40,7 +33,7 @@ TinyGPSPlus gps;
 
 PRIZM prizm;
 
-// === Constants ===
+
 
 float declinationDeg = -0.6;
 
@@ -52,7 +45,7 @@ const float TICKS_PER_REV = 1440.0;
 
 const bool INVERT_COMPASS = false;
 
-// === Speed Settings ===
+
 
 const int CRUISE_SPEED = 50;
 
@@ -60,7 +53,7 @@ const int TURN_SPEED = 45;
 
 const int MIN_MOTOR_POWER = 25;
 
-// === Waypoints ===
+
 
 struct NavPoint { float lat; float lon; };
 
@@ -82,7 +75,7 @@ int currentWaypoint = 0;
 
 bool navigationActive = true;
 
-// === Internal Variables ===
+
 
 float trustedHeading = 0;
 
@@ -102,37 +95,28 @@ const float GPS_ALPHA = 0.3;
 
 int16_t offsetX = 0, offsetY = 0;
 
-// ==========================================
 
-// === GPS 5Hz CONFIGURATION ===
-
-// ==========================================
 
 const unsigned char UBLOX_INIT[] PROGMEM = {
 
-// Disable NMEA GSV (Satellites in view - uses too much bandwidth)
+
 
 0xB5,0x62,0x06,0x01,0x08,0x00,0xF0,0x03,0x00,0x00,0x00,0x00,0x00,0x00,0x02,0x38,
 
-// Disable NMEA GLL (Redundant)
-
 0xB5,0x62,0x06,0x01,0x08,0x00,0xF0,0x01,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x2A,
 
-// Disable NMEA GSA (Redundant)
 
 0xB5,0x62,0x06,0x01,0x08,0x00,0xF0,0x02,0x00,0x00,0x00,0x00,0x00,0x00,0x01,0x31,
 
-// Disable NMEA VTG (Redundant)
 
 0xB5,0x62,0x06,0x01,0x08,0x00,0xF0,0x05,0x00,0x00,0x00,0x00,0x00,0x00,0x04,0x46,
 
-// Set Rate to 5Hz (200ms) - This is the key fix for overshoot!
 
 0xB5,0x62,0x06,0x08,0x06,0x00,0xC8,0x00,0x01,0x00,0x01,0x00,0xDE,0x6A
 
 };
 
-// === Safe Power Function ===
+
 
 void setSafeMotorPower(int left, int right) {
 
@@ -160,17 +144,17 @@ GPS_Serial.begin(9600);
 
 delay(100);
 
-// Send the configuration commands to the GPS
+
 
 for(unsigned int i = 0; i < sizeof(UBLOX_INIT); i++) {
 
 GPS_Serial.write(pgm_read_byte(UBLOX_INIT + i));
 
-delay(5); // Wait 5ms between bytes so the GPS doesn't choke
+delay(5); 
 
 }
 
-delay(500); // Wait for the GPS to process the changes
+delay(500); 
 
 prizm.PrizmBegin();
 
@@ -362,9 +346,8 @@ heading += COMPASS_OFFSET;
 
 
 
-heading += 180;  // sensor backwards
-
-heading -= 90;   // sensor rotated sideways → FIX WEST instead of SOUTH
+heading += 180;  
+heading -= 90;   
 
 
 
