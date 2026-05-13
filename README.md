@@ -48,10 +48,10 @@ A sophisticated autonomous robot navigation system using **GPS (5Hz)**, **QMC588
 
 | Component | Model | Purpose |
 |-----------|-------|---------|
-| **Controller** | PRIZM (VEX) | Motor control |
+| **Controller** | PRIZM  | Motor control |
 | **Compass** | QMC5883P | Magnetic heading |
 | **GPS Module** | UBLOX | Position & course |
-| **Motors** | VEX DC Motors | Differential drive |
+| **Motors** | DC Motors | Differential drive |
 | **Bluetooth** | HC-05 | Telemetry output |
 | **Encoders** | Motor encoders | Odometry validation |
 
