@@ -1,0 +1,18 @@
+# Arduino build artifacts
+*.ino.bin
+*.ino.elf
+*.ino.hex
+*.ino.with_bootloader.bin
+*.map
+
+# Arduino IDE metadata
+*.arduino
+*.sketch.json
+
+# Temporary/editor files
+*.tmp
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
