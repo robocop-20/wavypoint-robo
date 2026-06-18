@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Simplified 3-column flowchart: User -> Control Loop -> Device/Bridge -->
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="360" viewBox="0 0 900 360" role="img" aria-labelledby="title desc">
-  <title id="title">WavyPoint Robo — Navigation flowchart</title>
-  <desc id="desc">Left: user actions. Middle: navigation control loop (smoothing, offset learning, heading decision). Right: device & bridge (serial, PRIZM). Below: short notes on telemetry examples.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="360" viewBox="0 0 900 360">
   <style>
     .col { font-family: Arial, Helvetica, sans-serif; }
-    .box { fill:#ffffff; stroke:#2b2b2b; stroke-width:1.5; rx:8; }
+    .box { fill:#ffffff; stroke:#2b2b2b; stroke-width:1.5; }
     .header { font-weight:700; font-size:16px; }
     .text { font-size:12px; }
     .arrow { stroke:#2b2b2b; stroke-width:1.5; marker-end:url(#arrow); }
@@ -15,56 +12,40 @@
       <path d="M0,0 L10,5 L0,10 z" fill="#2b2b2b" />
     </marker>
   </defs>
-
-  <!-- Columns -->
-  <!-- User column -->
   <g transform="translate(30,20)" class="col">
     <text x="0" y="18" class="header">User</text>
-    <rect x="0" y="30" width="220" height="56" class="box" />
+    <rect x="0" y="30" width="220" height="56" rx="8" class="box" />
     <text x="12" y="54" class="text">Open app / Power robot</text>
     <text x="12" y="70" class="text">Press: Connect → Record → Start</text>
   </g>
-
-  <!-- Control loop column -->
   <g transform="translate(330,20)" class="col">
     <text x="0" y="18" class="header">Control loop</text>
-    <rect x="0" y="30" width="240" height="48" class="box" />
+    <rect x="0" y="30" width="240" height="48" rx="8" class="box" />
     <text x="12" y="52" class="text">Sensor read → EMA smoothing</text>
-
-    <rect x="0" y="90" width="240" height="56" class="box" />
+    <rect x="0" y="90" width="240" height="56" rx="8" class="box" />
     <text x="12" y="114" class="text">Offset learning (GPS when speed&gt;3 km/h)</text>
-
-    <rect x="0" y="170" width="240" height="56" class="box" />
+    <rect x="0" y="170" width="240" height="56" rx="8" class="box" />
     <text x="12" y="194" class="text">Heading decision: turn-in-place or proportional steering</text>
-
-    <rect x="0" y="250" width="240" height="48" class="box" />
-    <text x="12" y="272" class="text">Waypoint advance & stop logic</text>
+    <rect x="0" y="250" width="240" height="48" rx="8" class="box" />
+    <text x="12" y="272" class="text">Waypoint advance &amp; stop logic</text>
   </g>
-
-  <!-- Device/Bridge column -->
   <g transform="translate(660,20)" class="col">
     <text x="0" y="18" class="header">Device / Bridge</text>
-    <rect x="0" y="30" width="200" height="56" class="box" />
+    <rect x="0" y="30" width="200" height="56" rx="8" class="box" />
     <text x="12" y="54" class="text">Serial bridge (USB / BT)</text>
-    <text x="12" y="70" class="text">PRIZM firmware & motors</text>
-
-    <rect x="0" y="110" width="200" height="56" class="box" />
-    <text x="12" y="134" class="text">GPS module: course & speed</text>
-
-    <rect x="0" y="190" width="200" height="56" class="box" />
+    <text x="12" y="70" class="text">PRIZM firmware &amp; motors</text>
+    <rect x="0" y="110" width="200" height="56" rx="8" class="box" />
+    <text x="12" y="134" class="text">GPS module: course &amp; speed</text>
+    <rect x="0" y="190" width="200" height="56" rx="8" class="box" />
     <text x="12" y="214" class="text">Compass: raw heading</text>
   </g>
-
-  <!-- Arrows between columns -->
-  <path d="M250 60 L330 60" class="arrow" />
-  <path d="M570 72 L660 72" class="arrow" />
-  <path d="M570 132 L660 132" class="arrow" />
-  <path d="M570 212 L660 212" class="arrow" />
-
-  <!-- Telemetry note -->
+  <path d="M250 60 L330 60" class="arrow" fill="none" />
+  <path d="M570 72 L660 72" class="arrow" fill="none" />
+  <path d="M570 132 L660 132" class="arrow" fill="none" />
+  <path d="M570 212 L660 212" class="arrow" fill="none" />
   <g transform="translate(30,300)" class="col">
-    <rect x="0" y="0" width="840" height="54" class="box" />
+    <rect x="0" y="0" width="840" height="54" rx="8" class="box" />
     <text x="12" y="18" class="header">Telemetry (examples)</text>
-    <text x="12" y="36" class="text">Hdg:045 GPS:042 Off:145 Err:-3 Dist:12.5 — shows heading, GPS course, offset, error, distance</text>
+    <text x="12" y="36" class="text">Hdg:045 GPS:042 Off:145 Err:-3 Dist:12.5 — heading, GPS course, offset, error, distance</text>
   </g>
 </svg>
