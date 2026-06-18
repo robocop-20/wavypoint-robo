@@ -1,6 +1,6 @@
 # 🤖 Waypoint Navigation Robot with GPS & Compass
 
-A sophisticated autonomous robot navigation system using **GPS (5Hz)**, **QMC5883P Compass**, and **automatic offset learning algorithm** for accurate waypoint-following on a PRIZM-based platform.
+A sophisticated autonomous robot navigation system using **GPS (5Hz)**, **QMC5883P Compass**, and an **automatic offset learning algorithm** for accurate waypoint-following on a PRIZM-based platform.
 
 ---
 
@@ -48,7 +48,7 @@ A sophisticated autonomous robot navigation system using **GPS (5Hz)**, **QMC588
 
 | Component | Model | Purpose |
 |-----------|-------|---------|
-| **Controller** | PRIZM  | Motor control |
+| **Controller** | PRIZM | Motor control |
 | **Compass** | QMC5883P | Magnetic heading |
 | **GPS Module** | UBLOX | Position & course |
 | **Motors** | DC Motors | Differential drive |
@@ -65,16 +65,20 @@ A sophisticated autonomous robot navigation system using **GPS (5Hz)**, **QMC588
 
 ## 📊 Flowchart
 
-### View the Complete Navigation Flowchart:
+### Navigation Logic Overview
 
-📱 **[Interactive Flowchart - CLICK HERE](FLOWCHART.html)**
+![Navigation Flowchart](assets/flowchart.svg)
 
-The flowchart shows the complete navigation logic including:
-1. Setup Phase - Initialization and calibration
-2. Main Loop - Bluetooth control and navigation
-3. GPS Processing - Data smoothing and calculations
-4. Auto-Offset Learning - Self-calibration algorithm
-5. Navigation Control - Motor commands and steering
+If the image does not load, open the interactive version here: [FLOWCHART.html](FLOWCHART.html)
+
+This flowchart shows the full navigation pipeline:
+- Startup and calibration
+- GPS lock check
+- Sensor reading and smoothing
+- Offset learning
+- Heading decision
+- Waypoint tracking
+- Stop / next waypoint logic
 
 ---
 
