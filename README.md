@@ -2,32 +2,32 @@
 
 A compact, easy-to-run waypoint navigation robot using GPS and a QMC5883P compass with automatic boresight offset learning. Designed to help beginners and tinkers see results fast, and to give embedded developers a clear, well-documented codebase to extend.
 
-TL;DR — Try in 5 minutes
+## TL;DR — Try in 5 minutes
 
 1. Clone: git clone https://github.com/robocop-20/wavypoint-robo && cd wavypoint-robo
-2. Open the firmware folder in Arduino IDE, install the listed libraries, and upload to your PRIZM controller
+2. Open `wavy.c` in Arduino IDE (or copy it into your sketch), install the listed libraries, and upload to your PRIZM controller
 3. Power the robot, wait for "Ready. Auto-Align Active." and watch telemetry via Bluetooth or follow the demo flowchart in the README
 
-Why this project
+## Why this project
 
 - Instant feedback: a demo-first README and interactive flowchart make it easy to understand what the robot does in seconds.
 - Beginner friendly: step-by-step Quickstart and plain-language explanations.
 - Extensible: clear architecture notes and contribution guidelines for faster improvements.
 
-Features
+## Features
 
 - Waypoint-based autonomous navigation (Haversine for distance + automatic waypoint advance)
 - Automatic compass boresight offset learning (uses GPS course while moving)
 - GPS smoothing (EMA) and hybrid heading control for reliable tracking
 - Bluetooth telemetry for live monitoring and debugging
 
-Who this is for
+## Who this is for
 
 - Beginners who want a simple, visual robotics project
 - Educators teaching navigation, sensors, and control loops
 - Embedded developers who want a small, demonstrable codebase to hack on
 
-Quick links
+## Quick links
 
 - Try in 5 minutes: (see TL;DR above)
 - Flowchart (visual): assets/flowchart.svg
@@ -71,7 +71,7 @@ Prerequisites
 
 Installation & upload
 1. git clone https://github.com/robocop-20/wavypoint-robo
-2. Open firmware/ in Arduino IDE
+2. Open `wavy.c` in Arduino IDE (or copy it into your sketch)
 3. Install libraries (Sketch → Include Library → Manage Libraries...)
 4. Edit waypoints in firmware (if desired)
 5. Upload to PRIZM and power the robot
@@ -120,7 +120,7 @@ const float WHEEL_BASE = 0.34;
 
 Waypoints
 ```cpp
-NavPoint waypoints = {
+NavPoint waypoints[] = {
   {17.780223, 83.375458},
   {17.780277, 83.375477},
   {17.780322, 83.375368}
@@ -141,6 +141,15 @@ NavPoint waypoints = {
 ## 🤝 Contributing (short)
 
 Contributions welcome! See CONTRIBUTING.md for setup, style, and how to open a helpful PR (include a short demo GIF or screenshot if possible).
+
+---
+
+## 📁 Repository layout
+
+- `wavy.c` — main firmware source
+- `assets/flowchart.svg` — visual navigation flowchart
+- `docs/Flowchart-text.md` — accessible textual flow description
+- `.github/` — issue and pull request templates
 
 ---
 
