@@ -1,19 +1,38 @@
 # 🤖 Waypoint Navigation Robot with GPS & Compass
 
-A sophisticated autonomous robot navigation system using **GPS (5Hz)**, **QMC5883P Compass**, and **automatic offset learning algorithm** for accurate waypoint-following on a PRIZM-based platform.
+Autonomous waypoint-following robot firmware for a PRIZM-based platform using GPS + compass sensor fusion and self-learning heading offset correction.
+
+![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
+
+## 📌 What this project does
+
+This project controls a differential-drive robot that:
+- Reads GPS position/course and compass heading in real time
+- Navigates through predefined latitude/longitude waypoints
+- Auto-corrects compass boresight offset while moving
+- Outputs Bluetooth telemetry for live debugging
+
+### Discoverability metadata (GitHub About)
+- **Suggested description:** `Autonomous waypoint-navigation robot firmware using GPS + QMC5883P compass with self-learning heading offset correction on PRIZM.`
+- **Suggested topics:** `robotics`, `autonomous-robot`, `arduino`, `gps`, `compass`, `prizm`, `embedded`, `navigation`, `waypoint-navigation`, `sensor-fusion`
 
 ---
 
 ## 📋 Table of Contents
 
+- [What this project does](#-what-this-project-does)
 - [Features](#features)
 - [Hardware](#hardware)
 - [Flowchart](#flowchart)
+- [Demo & Screenshots](#-demo--screenshots)
 - [Key Algorithms](#key-algorithms)
 - [Getting Started](#getting-started)
 - [Configuration](#configuration)
 - [Usage](#usage)
 - [Troubleshooting](#troubleshooting)
+- [Project Structure](#-project-structure)
+- [Contributing](#-contributing)
+- [License](#-license)
 
 ---
 
@@ -78,6 +97,16 @@ The flowchart shows the complete navigation logic including:
 
 ---
 
+## 🎥 Demo & Screenshots
+
+- Demo video: _Add a short YouTube/Drive/GitHub video link here_
+- Real robot photo: _Add `/assets/robot.jpg` and link it here_
+- Telemetry screenshot: _Add `/assets/telemetry.png` and link it here_
+
+> Tip: Visual proof (video + photos) significantly improves first impressions and discoverability.
+
+---
+
 ## 🧠 Key Algorithms
 
 ### 1. Auto-Offset Learning Algorithm ⭐
@@ -135,11 +164,19 @@ ELSE:
 
 ### Installation
 
-1. Clone the repository
-2. Install required libraries in Arduino IDE
-3. Edit waypoints in the code
-4. Configure GPS baud rate and pins
-5. Upload to your PRIZM controller
+1. Clone the repository:
+```bash
+git clone https://github.com/robocop-20/wavypoint-robo.git
+cd wavypoint-robo
+```
+2. Open `wavy.c` in Arduino IDE
+3. Install required libraries in Arduino IDE:
+   - Adafruit QMC5883P
+   - TinyGPSPlus
+   - SoftwareSerial / PRIZM dependencies
+4. Edit waypoints in the code
+5. Configure GPS baud rate and pins
+6. Upload to your PRIZM controller
 
 ---
 
@@ -235,6 +272,17 @@ prizm.setMotorInvert(RIGHT_MOTOR, 1);  // Toggle if needed
 
 ---
 
+## 📁 Project Structure
+
+```text
+.
+├── wavy.c          # Main robot navigation firmware
+├── FLOWCHART.html  # Interactive navigation flowchart
+└── README.md       # Project documentation
+```
+
+---
+
 ## 🎯 Roadmap
 
 - [ ] IMU integration (better odometry)
@@ -246,9 +294,25 @@ prizm.setMotorInvert(RIGHT_MOTOR, 1);  // Toggle if needed
 
 ---
 
+## 🤝 Contributing
+
+Contributions are welcome. To contribute:
+1. Fork the repository
+2. Create a feature branch
+3. Keep changes focused and test on hardware/simulator when possible
+4. Open a Pull Request with a clear description and results
+
+---
+
 ## 📧 Contact
 
 For questions, open an Issue in this repository or check the Flowchart for navigation logic details.
+
+---
+
+## 📜 License
+
+Released under the MIT License. See [`LICENSE`](LICENSE).
 
 ---
 
