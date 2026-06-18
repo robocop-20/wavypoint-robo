@@ -1,259 +1,160 @@
-# 🤖 Waypoint Navigation Robot with GPS & Compass
+# 🤖 WavyPoint Robo — Waypoint Navigation Robot (Beginner-friendly)
 
-A sophisticated autonomous robot navigation system using **GPS (5Hz)**, **QMC5883P Compass**, and an **automatic offset learning algorithm** for accurate waypoint-following on a PRIZM-based platform.
+A compact, easy-to-run waypoint navigation robot using GPS and a QMC5883P compass with automatic boresight offset learning. Designed to help beginners and tinkers see results fast, and to give embedded developers a clear, well-documented codebase to extend.
 
----
+TL;DR — Try in 5 minutes
 
-## 📋 Table of Contents
+1. Clone: git clone https://github.com/robocop-20/wavypoint-robo && cd wavypoint-robo
+2. Open the firmware folder in Arduino IDE, install the listed libraries, and upload to your PRIZM controller
+3. Power the robot, wait for "Ready. Auto-Align Active." and watch telemetry via Bluetooth or follow the demo flowchart in the README
 
-- [Features](#features)
-- [Hardware](#hardware)
-- [Flowchart](#flowchart)
-- [Key Algorithms](#key-algorithms)
-- [Getting Started](#getting-started)
-- [Configuration](#configuration)
-- [Usage](#usage)
-- [Troubleshooting](#troubleshooting)
+Why this project
 
----
+- Instant feedback: a demo-first README and interactive flowchart make it easy to understand what the robot does in seconds.
+- Beginner friendly: step-by-step Quickstart and plain-language explanations.
+- Extensible: clear architecture notes and contribution guidelines for faster improvements.
 
-## ✨ Features
+Features
 
-### 🎯 Autonomous Navigation
-- Waypoint-based path following with GPS coordinates
-- Real-time distance and bearing calculations using Haversine formula
-- Automatic waypoint advancement when within 5 meters
+- Waypoint-based autonomous navigation (Haversine for distance + automatic waypoint advance)
+- Automatic compass boresight offset learning (uses GPS course while moving)
+- GPS smoothing (EMA) and hybrid heading control for reliable tracking
+- Bluetooth telemetry for live monitoring and debugging
 
-### 🧭 Smart Compass Calibration
-- **Automatic hard iron calibration** during startup (10-second spin)
-- **Dynamic boresight offset learning** - compass auto-calibrates during movement
-- Eliminates manual compass offset tuning
+Who this is for
 
-### 📡 GPS Integration
-- **5Hz GPS update rate** for smooth navigation
-- **EMA smoothing** (α=0.3) to reduce GPS noise
-- Speed-based offset learning: uses GPS course as ground truth when moving > 3 km/h
+- Beginners who want a simple, visual robotics project
+- Educators teaching navigation, sensors, and control loops
+- Embedded developers who want a small, demonstrable codebase to hack on
 
-### 🔄 Hybrid Heading Control
-- **Proportional steering** (Kp = 2.0) when heading error < 25°
-- **In-place rotation** when heading error > 25°
-- Smooth transitions between modes
+Quick links
 
-### 📊 Real-time Telemetry
-- Bluetooth debug output showing heading, GPS, offset, error, and distance
+- Try in 5 minutes: (see TL;DR above)
+- Flowchart (visual): assets/flowchart.svg
+- Flowchart (text): docs/Flowchart-text.md
+- Contributing: CONTRIBUTING.md
 
 ---
 
-## 🔧 Hardware
+## 🔧 Hardware (short)
 
 | Component | Model | Purpose |
 |-----------|-------|---------|
-| **Controller** | PRIZM | Motor control |
-| **Compass** | QMC5883P | Magnetic heading |
-| **GPS Module** | UBLOX | Position & course |
-| **Motors** | DC Motors | Differential drive |
-| **Bluetooth** | HC-05 | Telemetry output |
-| **Encoders** | Motor encoders | Odometry validation |
+| Controller | PRIZM | Motor control |
+| Compass | QMC5883P | Magnetic heading |
+| GPS | UBLOX | Position & course |
+| Motors | DC Motors | Differential drive |
+| Bluetooth | HC-05 | Telemetry |
+| Encoders | (optional) | Odometry validation |
 
-### Robot Specifications
-- **Wheel Radius:** 45 mm
-- **Wheel Base:** 340 mm
-- **Magnetic Declination:** -0.6°
-- **Baud Rate:** 9600 bps
 
----
-
-## 📊 Flowchart
-
-### Navigation Logic Overview
+## 📊 Flowchart — overview
 
 ![Navigation Flowchart](assets/flowchart.svg)
 
-If the image does not load, open the interactive version here: [FLOWCHART.html](FLOWCHART.html)
+If the image doesn't display on GitHub, open docs/Flowchart-text.md for an accessible step-by-step walkthrough.
 
-This flowchart shows the full navigation pipeline:
-- Startup and calibration
-- GPS lock check
-- Sensor reading and smoothing
-- Offset learning
-- Heading decision
-- Waypoint tracking
-- Stop / next waypoint logic
+This pipeline (short):
+- Startup & compass calibration
+- GPS lock & smoothing
+- Offset learning when moving (GPS course as ground truth)
+- Heading decision (turn-in-place vs proportional steering)
+- Waypoint tracking and advance
 
 ---
 
-## 🧠 Key Algorithms
+## 🚀 Getting Started (Beginner path)
 
-### 1. Auto-Offset Learning Algorithm ⭐
-
-The innovative self-calibration system:
-
-```
-IF GPS Speed > 3 km/h:
-    GPS_Course = Ground Truth (TRUE heading)
-    Compass_Reading = Measured magnetic heading
-    Offset_Error = GPS_Course - Compass_Reading
-    
-    IF First Movement:
-        Snap offset immediately
-    ELSE:
-        Converge slowly (5% learning rate)
-        dynamicBoresightOffset += offsetError * 0.05
-```
-
-**Why it works:**
-- GPS course is accurate when moving at speed
-- Compass learns true boresight offset gradually
-- Filters out transient magnetic anomalies
-- No manual calibration needed!
-
-### 2. Axis Mapping (Fixes "West instead of South")
-
-```cpp
-const char SENSOR_AXIS_FORWARD = 'Y';  // Sensor Y → Robot Forward
-const char SENSOR_AXIS_RIGHT   = 'X';  // Sensor X → Robot Right
-```
-
-### 3. GPS Smoothing
-
-Exponential Moving Average with α=0.3 reduces noise while maintaining responsiveness.
-
-### 4. Heading Control
-
-```
-IF |headingError| > 25°:
-    Turn in place (pure rotation)
-ELSE:
-    Cruise with proportional steering (Kp = 2.0)
-```
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
+Prerequisites
 - Arduino IDE
-- PRIZM libraries
-- Adafruit QMC5883P library
-- TinyGPSPlus library
+- PRIZM support libraries + Adafruit QMC5883P + TinyGPSPlus
 
-### Installation
+Installation & upload
+1. git clone https://github.com/robocop-20/wavypoint-robo
+2. Open firmware/ in Arduino IDE
+3. Install libraries (Sketch → Include Library → Manage Libraries...)
+4. Edit waypoints in firmware (if desired)
+5. Upload to PRIZM and power the robot
 
-1. Clone the repository
-2. Install required libraries in Arduino IDE
-3. Edit waypoints in the code
-4. Configure GPS baud rate and pins
-5. Upload to your PRIZM controller
+Quick test
+- Robot will run a 10s compass calibration at boot and print: "Ready. Auto-Align Active." via Bluetooth
+- When moving >3 km/h, the compass offset will auto-adjust using GPS course
 
----
-
-## ⚙️ Configuration
-
-### GPS Setup
-```cpp
-GPS_Serial.begin(9600);  // GPS baud rate
-// Pins: RX = 3, TX = 4 (SoftwareSerial)
-```
-
-### Compass Calibration
-```cpp
-const bool AUTO_LEARN_OFFSET = true;  // Enable auto-learning
-const float declinationDeg = -0.6;    // Your location declination
-```
-
-### Navigation Parameters
-```cpp
-const int CRUISE_SPEED = 50;       // Motor speed (0-100)
-const int TURN_SPEED = 45;         // Turn speed (0-100)
-const float WHEEL_RADIUS = 0.045;  // meters
-const float WHEEL_BASE = 0.34;     // meters
-```
-
-### Set Your Waypoints
-```cpp
-NavPoint waypoints = {
-  {17.780223, 83.375458},  // Waypoint 1
-  {17.780277, 83.375477},  // Waypoint 2
-  {17.780322, 83.375368},  // Waypoint 3
-  {17.780305, 83.375359}   // Waypoint 4
-};
-```
-
----
-
-## 📱 Usage
-
-### 1. Power On
-- Robot performs 10-second compass calibration
-- Prints "Ready. Auto-Align Active." via Bluetooth
-
-### 2. Start Navigation
-- Awaits GPS lock
-- Automatically starts waypoint following
-
-### 3. Monitor via Bluetooth
+Telemetry example (Bluetooth)
 ```
 Hdg:045 GPS:042 Off:145 Err:-3 Dist:12.5
 Hdg:046 GPS:041 Off:144 Err:-2 Dist:11.3
 ```
 
+Field meanings
 | Field | Meaning |
 |-------|---------|
-| **Hdg** | Current compass heading (0-359°) |
-| **GPS** | GPS course |
-| **Off** | Dynamic boresight offset |
-| **Err** | Heading error to target |
-| **Dist** | Distance to waypoint (meters) |
-
-### 4. Stop Navigation
-- Send 'S' or 's' via Bluetooth to stop
+| Hdg | Compass heading (0–359°) |
+| GPS | GPS course |
+| Off | Learned boresight offset |
+| Err | Heading error to target |
+| Dist | Distance to waypoint (m) |
 
 ---
 
-## 🐛 Troubleshooting
+## ⚙️ Configuration (quick)
 
-### Compass Heading Wrong Direction
-**Solution:** Adjust axis mapping:
+GPS
 ```cpp
-const char SENSOR_AXIS_FORWARD = 'Y';  // Try 'X', '-X', '-Y'
-const char SENSOR_AXIS_RIGHT   = 'X';  // Try 'Y', '-X', '-Y'
+GPS_Serial.begin(9600);  // set to your module baud rate
 ```
 
-### GPS Not Updating
-**Solution:** Check connection and baud rate
+Compass
 ```cpp
-GPS_Serial.begin(9600);  // Verify this matches your module
+const bool AUTO_LEARN_OFFSET = true;
+const float declinationDeg = -0.6;
 ```
 
-### Offset Not Converging
-**Solution:** Ensure robot is moving > 3 km/h during initial movement.
-
-### Robot Spinning Wrong Direction
-**Solution:** Check motor invert settings
+Navigation params
 ```cpp
-prizm.setMotorInvert(RIGHT_MOTOR, 1);  // Toggle if needed
+const int CRUISE_SPEED = 50;
+const int TURN_SPEED = 45;
+const float WHEEL_RADIUS = 0.045;
+const float WHEEL_BASE = 0.34;
 ```
 
-### Drifting Off Course
-**Solution:** Calibrate wheel radius and base width with actual measurements.
+Waypoints
+```cpp
+NavPoint waypoints = {
+  {17.780223, 83.375458},
+  {17.780277, 83.375477},
+  {17.780322, 83.375368}
+};
+```
 
 ---
 
-## 🎯 Roadmap
+## 🐛 Troubleshooting (common)
 
-- [ ] IMU integration (better odometry)
-- [ ] Path planning optimization
-- [ ] Magnetic anomaly detection
-- [ ] Multi-waypoint upload via Bluetooth
-- [ ] Web dashboard
-- [ ] Obstacle avoidance
+- Compass heading wrong: try axis mapping modifications in firmware (SENSOR_AXIS_FORWARD / SENSOR_AXIS_RIGHT)
+- GPS not updating: verify baud rate & wiring
+- Offset not converging: ensure the robot moves faster than 3 km/h during initial learning
+- Robot spinning: check motor invert settings
+
+---
+
+## 🤝 Contributing (short)
+
+Contributions welcome! See CONTRIBUTING.md for setup, style, and how to open a helpful PR (include a short demo GIF or screenshot if possible).
+
+---
+
+## 🎯 Roadmap (help wanted)
+
+- IMU integration (better odometry)
+- Path planning improvements
+- Web dashboard for live telemetry
+- Multi-waypoint upload via Bluetooth
 
 ---
 
 ## 📧 Contact
 
-For questions, open an Issue in this repository or check the Flowchart for navigation logic details.
+Open an issue or pull request. If you want a shoutout in the README demo section, add a PR with the demo media and I'll include it.
 
----
-
-**Built with ❤️ for autonomous robotics**
+**Built with ❤️ — beginner-first, extendable, and fun to hack on.**
