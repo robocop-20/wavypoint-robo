@@ -12,6 +12,10 @@ This project controls a differential-drive robot that:
 - Auto-corrects compass boresight offset while moving
 - Outputs Bluetooth telemetry for live debugging
 
+### Discoverability metadata (GitHub About)
+- **Suggested description:** `Autonomous waypoint-navigation robot firmware using GPS + QMC5883P compass with self-learning heading offset correction on PRIZM.`
+- **Suggested topics:** `robotics`, `autonomous-robot`, `arduino`, `gps`, `compass`, `prizm`, `embedded`, `navigation`, `waypoint-navigation`, `sensor-fusion`
+
 ---
 
 ## 📋 Table of Contents
