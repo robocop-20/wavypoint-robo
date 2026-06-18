@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WavyPoint Robo - Navigation Flowchart</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .flowchart-container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            margin-bottom: 40px;
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .legend-item {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .legend-item h3 {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .legend-badge {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .badge-start {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .badge-sensor {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .badge-process {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .badge-decision {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .badge-waypoint {
+            background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+        }
+
+        .legend-item p {
+            color: #666;
+            line-height: 1.6;
+            font-size: 0.95em;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-card h4 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            opacity: 0.9;
+            font-size: 0.95em;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            background: #f0f0f0;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: #666;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .tab-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .description-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .description-box h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .flowchart-container {
+                padding: 20px;
+            }
+        }
+
+        /* Dark theme toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            font-weight: 600;
+            z-index: 100;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        body.dark-mode .flowchart-container,
+        body.dark-mode .legend-item {
+            background: #2a2a3e;
+            color: white;
+        }
+
+        body.dark-mode .legend-item h3,
+        body.dark-mode .description-box h4 {
+            color: #667eea;
+        }
+
+        body.dark-mode .legend-item p {
+            color: #ccc;
+        }
+
+        body.dark-mode .description-box {
+            background: #1a1a2e;
+            border-left-color: #667eea;
+        }
+
+        body.dark-mode .tab-btn {
+            background: #3a3a4e;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">🌙 Dark Mode</button>
+
+    <div class="container">
+        <div class="header">
+            <h1>🤖 WavyPoint Robo Navigation System</h1>
+            <p>Complete flowchart of the autonomous navigation pipeline</p>
+        </div>
+
+        <div class="flowchart-container">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('mermaid')">Visual Flowchart</button>
+                <button class="tab-btn" onclick="switchTab('stages')">Pipeline Stages</button>
+                <button class="tab-btn" onclick="switchTab('telemetry')">Telemetry Reference</button>
+            </div>
+
+            <!-- Mermaid Flowchart -->
+            <div id="mermaid" class="tab-content active">
+                <div class="mermaid">
+graph TD
+    A["🚀 STARTUP<br/>Initialize Hardware"] --> B["⚙️ CONFIG<br/>GPS, Compass, Motors"]
+    B --> C["🧭 CALIBRATION<br/>Compass 360° Spin<br/>Duration: 10s"]
+    C --> D{"GPS<br/>LOCKED?"}
+    D -->|No| D
+    D -->|Yes| E["📍 SENSOR LOOP<br/>Read: Compass, GPS<br/>Interval: 200ms"]
+    
+    E --> F["🔄 SMOOTHING<br/>EMA Filter<br/>Reduce Noise"]
+    F --> G{"Moving<br/>3+ km/h?"}
+    G -->|Yes| H["📚 LEARN OFFSET<br/>GPS = Ground Truth<br/>Learning Rate: 5%"]
+    G -->|No| I["⏸️ SKIP LEARNING<br/>Maintain Offset"]
+    H --> J["🎯 CALCULATE BEARING<br/>Haversine Formula<br/>Distance + Direction"]
+    I --> J
+    
+    J --> K["📐 ERROR CHECK<br/>Target Heading<br/>vs Current Heading"]
+    K --> L{"Error<br/>25°+?"}
+    
+    L -->|Yes| M["🔄 TURN IN PLACE<br/>High Speed Rotation<br/>Reduce Error Fast"]
+    L -->|No| N["➡️ PROPORTIONAL STEERING<br/>Smooth Curve<br/>Cruise Speed"]
+    
+    M --> O["⚡ MOTOR CONTROL<br/>Set Motor Powers<br/>Differential Drive"]
+    N --> O
+    
+    O --> P["📏 WAYPOINT CHECK<br/>Distance < 5m?"]
+    P -->|No| Q["🔁 CONTINUE<br/>Track Waypoint"]
+    P -->|Yes| R["✅ REACHED!<br/>Stop Motors<br/>Advance to Next"]
+    
+    Q --> E
+    R --> S{"All Waypoints<br/>Complete?"}
+    S -->|No| E
+    S -->|Yes| T["🏁 MISSION DONE<br/>Robot Stopped<br/>Awaiting Command"]
+    
+    E -.->|Every Cycle| U["📡 TELEMETRY<br/>Hdg GPS Off Err Dist"]
+    
+    style A fill:#667eea,stroke:#333,stroke-width:3px,color:#fff
+    style C fill:#f093fb,stroke:#333,stroke-width:2px,color:#fff
+    style E fill:#f5576c,stroke:#333,stroke-width:2px,color:#fff
+    style F fill:#4facfe,stroke:#333,stroke-width:2px,color:#fff
+    style H fill:#30cfd0,stroke:#333,stroke-width:2px,color:#000
+    style J fill:#4facfe,stroke:#333,stroke-width:2px,color:#fff
+    style K fill:#fa709a,stroke:#333,stroke-width:2px,color:#fff
+    style M fill:#ff6b6b,stroke:#333,stroke-width:2px,color:#fff
+    style N fill:#51cf66,stroke:#333,stroke-width:2px,color:#fff
+    style O fill:#4facfe,stroke:#333,stroke-width:2px,color:#fff
+    style P fill:#fa709a,stroke:#333,stroke-width:2px,color:#fff
+    style R fill:#30cfd0,stroke:#333,stroke-width:2px,color:#000
+    style T fill:#667eea,stroke:#333,stroke-width:3px,color:#fff
+    style U fill:#ffd93d,stroke:#333,stroke-width:2px,color:#000
+                </div>
+            </div>
+
+            <!-- Pipeline Stages -->
+            <div id="stages" class="tab-content">
+                <div class="description-box">
+                    <h4>📋 Six-Stage Navigation Pipeline</h4>
+                    <p>The robot executes these stages in a continuous loop:</p>
+                </div>
+
+                <div class="legend">
+                    <div class="legend-item">
+                        <h3>
+                            <div class="legend-badge badge-sensor">1️⃣</div>
+                            Sensor Acquisition
+                        </h3>
+                        <p><strong>What:</strong> Read compass heading and GPS position simultaneously</p>
+                        <p><strong>Frequency:</strong> Every 200ms</p>
+                        <p><strong>Output:</strong> Raw heading, latitude, longitude, course</p>
+                        <p><strong>Hardware:</strong> QMC5883P + UBLOX GPS</p>
+                    </div>
+
+                    <div class="legend-item">
+                        <h3>
+                            <div class="legend-badge badge-process">2️⃣</div>
+                            Noise Filtering
+                        </h3>
+                        <p><strong>What:</strong> Apply exponential moving average (EMA) to smooth data</p>
+                        <p><strong>Filter Coefficient:</strong> α = 0.1</p>
+                        <p><strong>Why:</strong> Removes sensor spikes, reduces jitter</p>
+                        <p><strong>Result:</strong> Clean, stable heading and position</p>
+                    </div>
+
+                    <div class="legend-item">
+                        <h3>
+                            <div class="legend-badge badge-waypoint">3️⃣</div>
+                            Offset Learning
+                        </h3>
+                        <p><strong>When:</strong> Robot moving > 3 km/h</p>
+                        <p><strong>How:</strong> GPS course = ground truth heading</p>
+                        <p><strong>Learning Rate:</strong> 5% per cycle</p>
+                        <p><strong>Benefit:</strong> Self-calibrating compass, no manual alignment</p>
+                    </div>
+
+                    <div class="legend-item">
+                        <h3>
+                            <div class="legend-badge badge-process">4️⃣</div>
+                            Target Calculation
+                        </h3>
+                        <p><strong>Algorithm:</strong> Haversine formula for great-circle distance</p>
+                        <p><strong>Inputs:</strong> Current position, target waypoint coordinates</p>
+                        <p><strong>Outputs:</strong> Distance (meters), bearing (degrees)</p>
+                        <p><strong>Accuracy:</strong> ±2-5m depending on GPS signal</p>
+                    </div>
+
+                    <div class="legend-item">
+                        <h3>
+                            <div class="legend-badge badge-decision">5️⃣</div>
+                            Heading Decision
+                        </h3>
+                        <p><strong>Calculation:</strong> Error = Target Bearing - Current Heading</p>
+                        <p><strong>If |Error| > 25°:</strong> Turn in place (fast correction)</p>
+                        <p><strong>If |Error| ≤ 25°:</strong> Proportional steering (smooth turn)</p>
+                        <p><strong>Goal:</strong> Minimize heading error to target</p>
+                    </div>
+
+                    <div class="legend-item">
+                        <h3>
+                            <div class="legend-badge badge-process">6️⃣</div>
+                            Motor Control
+                        </h3>
+                        <p><strong>Method:</strong> Differential drive (left + right motor speeds)</p>
+                        <p><strong>Cruise Speed:</strong> 50 (0-100 scale)</p>
+                        <p><strong>Turn Speed:</strong> 45 (0-100 scale)</p>
+                        <p><strong>Steering:</strong> Speed difference creates curves</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Telemetry Reference -->
+            <div id="telemetry" class="tab-content">
+                <div class="description-box">
+                    <h4>📡 Real-Time Telemetry Output</h4>
+                    <p>Every cycle, the robot broadcasts this data via Bluetooth:</p>
+                </div>
+
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px; font-family: 'Courier New', monospace;">
+                    <div style="color: #667eea; font-weight: bold; margin-bottom: 15px;">Example Output (one per second):</div>
+                    <div style="color: #333; line-height: 2;">
+                        Hdg:045 GPS:042 Off:145 Err:-3 Dist:12.5<br>
+                        Hdg:046 GPS:041 Off:144 Err:-2 Dist:11.3<br>
+                        Hdg:047 GPS:040 Off:143 Err:-1 Dist:10.8<br>
+                        Hdg:048 GPS:039 Off:142 Err:+1 Dist:10.2
+                    </div>
+                </div>
+
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                    <thead>
+                        <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                            <th style="padding: 15px; text-align: left;">Field</th>
+                            <th style="padding: 15px; text-align: left;">Range</th>
+                            <th style="padding: 15px; text-align: left;">Meaning</th>
+                            <th style="padding: 15px; text-align: left;">What It Tells You</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid #ddd;">
+                            <td style="padding: 15px;"><strong>Hdg</strong> (Heading)</td>
+                            <td style="padding: 15px;">0–359°</td>
+                            <td style="padding: 15px;">Current compass direction</td>
+                            <td style="padding: 15px;">Which way the robot is pointing</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #ddd; background: #f9f9f9;">
+                            <td style="padding: 15px;"><strong>GPS</strong></td>
+                            <td style="padding: 15px;">0–359°</td>
+                            <td style="padding: 15px;">GPS course (calculated from movement)</td>
+                            <td style="padding: 15px;">Which way the robot is actually moving</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #ddd;">
+                            <td style="padding: 15px;"><strong>Off</strong> (Offset)</td>
+                            <td style="padding: 15px;">-180 to +180</td>
+                            <td style="padding: 15px;">Learned boresight offset</td>
+                            <td style="padding: 15px;">Compass correction factor (learned automatically)</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #ddd; background: #f9f9f9;">
+                            <td style="padding: 15px;"><strong>Err</strong> (Error)</td>
+                            <td style="padding: 15px;">-180 to +180</td>
+                            <td style="padding: 15px;">Heading error to target</td>
+                            <td style="padding: 15px;">How far off course (negative = left, positive = right)</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 15px;"><strong>Dist</strong> (Distance)</td>
+                            <td style="padding: 15px;">0 to 9999m</td>
+                            <td style="padding: 15px;">Distance to active waypoint</td>
+                            <td style="padding: 15px;">How far until next waypoint reached</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="legend">
+                    <div class="legend-item">
+                        <h3>✅ Healthy Telemetry Signs</h3>
+                        <p>✓ Hdg slowly changing (smooth turns)</p>
+                        <p>✓ Err reducing toward zero</p>
+                        <p>✓ GPS tracking closely with Hdg</p>
+                        <p>✓ Dist decreasing over time</p>
+                        <p>✓ Off stable (not jumping)</p>
+                    </div>
+
+                    <div class="legend-item">
+                        <h3>⚠️ Warning Signs</h3>
+                        <p>✗ Hdg jumping erratically (bad compass)</p>
+                        <p>✗ GPS frozen (GPS lock lost)</p>
+                        <p>✗ Err oscillating wildly (motor issue)</p>
+                        <p>✗ Off not converging (move faster)</p>
+                        <p>✗ Dist stuck (encoder feedback needed)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="stats">
+            <div class="stat-card">
+                <h4>200ms</h4>
+                <p>Sensor Loop Frequency</p>
+            </div>
+            <div class="stat-card">
+                <h4>±5°</h4>
+                <p>Compass Accuracy</p>
+            </div>
+            <div class="stat-card">
+                <h4>2–5m</h4>
+                <p>GPS Precision</p>
+            </div>
+            <div class="stat-card">
+                <h4>1 m/s</h4>
+                <p>Max Speed</p>
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div style="margin-top: 40px;">
+            <h2 style="color: white; margin-bottom: 20px;">📌 Flowchart Legend</h2>
+            <div class="legend">
+                <div class="legend-item">
+                    <h3>
+                        <div class="legend-badge badge-start">🎬</div>
+                        Startup / End
+                    </h3>
+                    <p>Major system events: initialization and completion</p>
+                </div>
+
+                <div class="legend-item">
+                    <h3>
+                        <div class="legend-badge badge-sensor">📊</div>
+                        Sensor Input
+                    </h3>
+                    <p>Reading data from hardware (compass, GPS, motors)</p>
+                </div>
+
+                <div class="legend-item">
+                    <h3>
+                        <div class="legend-badge badge-process">⚙️</div>
+                        Processing
+                    </h3>
+                    <p>Calculation, filtering, or transformation steps</p>
+                </div>
+
+                <div class="legend-item">
+                    <h3>
+                        <div class="legend-badge badge-decision">🔀</div>
+                        Decision Point
+                    </h3>
+                    <p>Conditional branch (if/else) affecting behavior</p>
+                </div>
+
+                <div class="legend-item">
+                    <h3>
+                        <div class="legend-badge badge-waypoint">🎯</div>
+                        Waypoint Event
+                    </h3>
+                    <p>Waypoint-specific logic: detection, advance, completion</p>
+                </div>
+
+                <div class="legend-item">
+                    <h3>
+                        <div class="legend-badge" style="background: linear-gradient(135deg, #ffd93d 0%, #ff6b6b 100%);">📡</div>
+                        Telemetry Output
+                    </h3>
+                    <p>Data broadcast to user via Bluetooth serial</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const btn = document.querySelector('.theme-toggle');
+            if (document.body.classList.contains('dark-mode')) {
+                btn.textContent = '☀️ Light Mode';
+            } else {
+                btn.textContent = '🌙 Dark Mode';
+            }
+        }
+
+        // Initialize Mermaid
+        mermaid.initialize({ startOnLoad: true, theme: 'base', securityLevel: 'loose' });
+        mermaid.contentLoaded();
+    </script>
+</body>
+</html>
