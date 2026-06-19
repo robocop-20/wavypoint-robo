@@ -1,31 +1,43 @@
-WavyPoint Robo — Flowchart textual walkthrough
+# Navigation flowchart — text walkthrough
 
-This file explains the navigation flow in simple steps for screen readers and accessibility. Use the SVG in the README for a visual reference.
+A plain-text version of [`assets/flowchart.svg`](../assets/flowchart.svg), for accessibility or if the image doesn't render.
 
-1. User / Startup
-- Power on the robot or open the controller app.
-- The robot performs a 10-second compass calibration (hard-iron calibration). It reports status via Bluetooth.
+## 1. User
 
-2. Sensor acquisition & smoothing
-- Compass and GPS are read at regular intervals.
-- GPS course and position are smoothed using an exponential moving average to reduce spikes.
+- Power on the robot, or open the companion app
+- Sequence: **Connect → Record → Start**
 
-3. Offset learning
-- When the robot is moving faster than 3 km/h, GPS course is treated as the ground truth heading.
-- The dynamic boresight offset is adjusted: either snapped on first movement or slowly converged (5% learning rate) otherwise.
+## 2. Control loop (runs continuously on the PRIZM)
 
-4. Heading decision
-- If absolute heading error &gt; 25°, the robot performs in-place rotation to reduce error quickly.
-- Otherwise it uses proportional steering (Kp) for smooth course correction while cruising.
+1. **Sensor read → EMA smoothing**
+   Raw compass and GPS readings are filtered with an exponential moving average to remove noise before they reach the control logic.
 
-5. Waypoint tracking
-- Distance to the active waypoint is computed via the Haversine formula.
-- When within a small radius (default 5 m), the robot advances to the next waypoint.
+2. **Offset learning**
+   While speed exceeds 3 km/h, the GPS course (ground truth) is compared against the raw compass heading. The difference is learned as a boresight offset and applied going forward — this is what lets the robot self-correct without a manual calibration step.
 
-6. Device & bridge
-- A serial bridge (USB or Bluetooth) relays telemetry and commands between the robot and the host.
-- Telemetry format (example): Hdg:045 GPS:042 Off:145 Err:-3 Dist:12.5
+3. **Heading decision**
+   - If heading error is large: turn in place to face the target
+   - If heading error is small: apply proportional steering correction while driving forward
 
-Notes for maintainers
-- Keep the learning rate conservative to avoid overfitting to transient magnetic anomalies.
-- Prefer visible telemetry output for faster debugging during new feature development.
+4. **Waypoint advance & stop logic**
+   Haversine distance to the current waypoint is checked each cycle. Below the arrival threshold, the robot advances to the next waypoint in the list, or stops if it was the last one.
+
+## 3. Device / bridge
+
+- **Serial bridge (USB / Bluetooth)** — connects to PRIZM firmware, which drives the motors directly
+- **GPS module** — supplies course and speed, used both for navigation and for offset learning
+- **Compass** — supplies raw heading, corrected by the learned offset before use
+
+## Telemetry line format
+
+```
+Hdg:045 GPS:042 Off:145 Err:-3 Dist:12.5
+```
+
+| Field | Meaning |
+|---|---|
+| `Hdg` | Compass heading (0–359°) |
+| `GPS` | GPS course |
+| `Off` | Learned boresight offset |
+| `Err` | Heading error to target |
+| `Dist` | Distance to waypoint (meters) |
