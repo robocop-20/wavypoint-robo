@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101814">
+  <meta name="description" content="Interactive waypoint-navigation simulator and project guide for WavyPoint Robo.">
+  <meta property="og:title" content="WavyPoint Robo — Interactive Navigation Demo">
+  <meta property="og:description" content="Explore the robot's GPS waypoint loop, steering decisions, telemetry, and hardware build.">
+  <meta property="og:image" content="https://raw.githubusercontent.com/robocop-20/wavypoint-robo/main/assets/robot-top-view.png">
+  <title>WavyPoint Robo — Interactive Navigation Demo</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="WavyPoint Robo home">
+      <span class="brand-mark" aria-hidden="true">WP</span>
+      <span>WavyPoint Robo</span>
+    </a>
+    <nav aria-label="Primary navigation">
+      <a href="#simulator">Simulator</a>
+      <a href="#pipeline">Control loop</a>
+      <a href="#build">Robot</a>
+      <a class="github-link" href="https://github.com/robocop-20/wavypoint-robo">View code ↗</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="intro" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow">PRIZM · GPS · QMC5883P · Bluetooth</p>
+        <h1 id="page-title">See waypoint navigation think in real time.</h1>
+        <p class="lede">Run a browser simulation of the same navigation decisions used by the firmware: smooth a GPS position, calculate target bearing, turn toward the route, and advance through each waypoint.</p>
+      </div>
+      <div class="status-card">
+        <span class="pulse" aria-hidden="true"></span>
+        <div>
+          <strong>Interactive demo ready</strong>
+          <span>No hardware or installation required</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="simulator" id="simulator" aria-labelledby="simulator-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Navigation simulator</p>
+          <h2 id="simulator-title">Mission control</h2>
+        </div>
+        <div class="controls" aria-label="Simulation controls">
+          <button class="button primary" id="startButton" type="button">Start mission</button>
+          <button class="button" id="pauseButton" type="button" disabled>Pause</button>
+          <button class="button danger" id="stopButton" type="button" disabled>Emergency stop</button>
+          <button class="button ghost" id="resetButton" type="button">Reset</button>
+        </div>
+      </div>
+
+      <div class="sim-grid">
+        <div class="map-card">
+          <div class="map-toolbar">
+            <span class="map-label">SIMULATED OUTDOOR ROUTE</span>
+            <span class="mission-state" id="missionState">Ready</span>
+          </div>
+          <canvas id="routeCanvas" width="900" height="560" aria-label="Animated map showing the robot moving between four waypoints"></canvas>
+          <div class="map-legend" aria-hidden="true">
+            <span><i class="legend-line"></i> Planned route</span>
+            <span><i class="legend-dot"></i> Active waypoint</span>
+            <span><i class="legend-trail"></i> Robot trail</span>
+          </div>
+        </div>
+
+        <aside class="telemetry-card" aria-labelledby="telemetry-title">
+          <div class="telemetry-heading">
+            <div>
+              <p class="eyebrow">Bluetooth stream</p>
+              <h3 id="telemetry-title">Live telemetry</h3>
+            </div>
+            <span class="connection"><i></i> HC-05</span>
+          </div>
+          <dl class="telemetry-grid">
+            <div><dt>Heading</dt><dd><span id="headingValue">000</span><small>°</small></dd></div>
+            <div><dt>Target</dt><dd><span id="targetValue">000</span><small>°</small></dd></div>
+            <div><dt>Error</dt><dd><span id="errorValue">+0</span><small>°</small></dd></div>
+            <div><dt>Distance</dt><dd><span id="distanceValue">0.0</span><small>m</small></dd></div>
+            <div><dt>Waypoint</dt><dd><span id="waypointValue">1/4</span></dd></div>
+            <div><dt>Drive mode</dt><dd class="mode-value" id="modeValue">IDLE</dd></div>
+          </dl>
+          <div class="telemetry-log" id="telemetryLog" role="log" aria-live="polite">
+            <p><span>SYS</span> Mission loaded. Awaiting start.</p>
+          </div>
+        </aside>
+      </div>
+
+      <div class="tuning-panel" aria-labelledby="tuning-title">
+        <div>
+          <p class="eyebrow">Try different behavior</p>
+          <h3 id="tuning-title">Control tuning</h3>
+        </div>
+        <label>
+          <span>Cruise speed <output id="speedOutput">50</output></span>
+          <input id="speedInput" type="range" min="20" max="90" value="50">
+        </label>
+        <label>
+          <span>Turn threshold <output id="turnOutput">25°</output></span>
+          <input id="turnInput" type="range" min="8" max="50" value="25">
+        </label>
+        <label>
+          <span>Arrival radius <output id="radiusOutput">5.0 m</output></span>
+          <input id="radiusInput" type="range" min="2" max="12" value="5" step="0.5">
+        </label>
+      </div>
+    </section>
+
+    <section class="pipeline-section" id="pipeline" aria-labelledby="pipeline-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Explore the firmware</p>
+          <h2 id="pipeline-title">One loop, five decisions</h2>
+        </div>
+        <p class="section-copy">Select a stage to see what the robot receives, calculates, and changes.</p>
+      </div>
+      <div class="pipeline" role="list" aria-label="Firmware stages">
+        <button class="stage active" type="button" data-stage="sensors" role="listitem"><span>01</span><strong>Read sensors</strong><small>GPS + compass</small></button>
+        <button class="stage" type="button" data-stage="smooth" role="listitem"><span>02</span><strong>Smooth position</strong><small>EMA filter</small></button>
+        <button class="stage" type="button" data-stage="calculate" role="listitem"><span>03</span><strong>Calculate route</strong><small>Distance + bearing</small></button>
+        <button class="stage" type="button" data-stage="steer" role="listitem"><span>04</span><strong>Steer</strong><small>Turn or correct</small></button>
+        <button class="stage" type="button" data-stage="advance" role="listitem"><span>05</span><strong>Advance</strong><small>Next waypoint</small></button>
+      </div>
+      <article class="stage-detail" id="stageDetail" aria-live="polite">
+        <div class="detail-icon" aria-hidden="true">⌁</div>
+        <div>
+          <p class="eyebrow" id="detailEyebrow">Input stage</p>
+          <h3 id="detailTitle">Read sensors</h3>
+          <p id="detailBody">TinyGPSPlus decodes incoming position fixes while the QMC5883P provides magnetic heading. Bluetooth is checked for an emergency stop command every loop.</p>
+        </div>
+        <code id="detailCode">while (GPS_Serial.available()) gps.encode(GPS_Serial.read());</code>
+      </article>
+    </section>
+
+    <section class="build-section" id="build" aria-labelledby="build-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Physical build</p>
+          <h2 id="build-title">From control loop to moving robot</h2>
+        </div>
+        <p class="section-copy">A differential-drive platform with the PRIZM controller, GPS, compass, HC-05, motors, and battery mounted on a metal chassis.</p>
+      </div>
+      <div class="photo-grid">
+        <figure>
+          <img src="assets/robot-top-view.png" alt="Top view of the assembled WavyPoint Robo showing its chassis, controller, wiring, battery, and wheels">
+          <figcaption><strong>Top view</strong><span>Controller, power, sensors, and drive layout</span></figcaption>
+        </figure>
+        <figure>
+          <img src="assets/robot-front-view.png" alt="Front perspective of the assembled WavyPoint Robo showing the sensor mount and tracked wheels">
+          <figcaption><strong>Front perspective</strong><span>Compass mount and differential-drive chassis</span></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="next-step">
+      <div>
+        <p class="eyebrow">Build it yourself</p>
+        <h2>Ready to upload the real firmware?</h2>
+        <p>Review wiring, replace the sample waypoints, calibrate safely, and test the stop command with the wheels raised.</p>
+      </div>
+      <a class="button primary" href="https://github.com/robocop-20/wavypoint-robo#setup">Open setup guide ↗</a>
+    </section>
+  </main>
+
+  <footer>
+    <span>WavyPoint Robo</span>
+    <span>Interactive model for education and testing — not a hardware-in-the-loop controller.</span>
+  </footer>
+</body>
+</html>

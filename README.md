@@ -4,6 +4,8 @@ Autonomous GPS waypoint navigation for a differential-drive robot built with a P
 
 The firmware smooths GPS fixes, calculates the distance and bearing to each waypoint, and uses compass feedback to turn or steer toward the target. It advances through the waypoint list automatically and streams status over Bluetooth.
 
+> **[Launch the interactive navigation demo](https://robocop-20.github.io/wavypoint-robo/)** — simulate the route, tune steering behavior, inspect telemetry, and explore each control-loop stage in your browser.
+
 ## Robot build
 
 <table>
@@ -135,6 +137,9 @@ Send `S` or `s` over Bluetooth to stop navigation. The current firmware does not
 ```text
 .
 |-- wavy.c                         # Arduino-compatible firmware
+|-- index.html                     # Interactive project page
+|-- styles.css                     # Project page design
+|-- app.js                         # Navigation simulation and controls
 |-- assets/flowchart.svg           # Authoritative navigation diagram
 |-- assets/robot-top-view.png      # Assembled robot, top view
 |-- assets/robot-front-view.png    # Assembled robot, front perspective
