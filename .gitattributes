@@ -1,5 +1,0 @@
-# Keep GitHub's language bar focused on the embedded firmware.
-*.html linguist-detectable=false
-*.css linguist-detectable=false
-*.js linguist-detectable=false
-*.svg linguist-detectable=false
