@@ -1,51 +1,84 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="360" viewBox="0 0 900 360">
-  <style>
-    .col { font-family: Arial, Helvetica, sans-serif; }
-    .box { fill:#ffffff; stroke:#2b2b2b; stroke-width:1.5; }
-    .header { font-weight:700; font-size:16px; }
-    .text { font-size:12px; }
-    .arrow { stroke:#2b2b2b; stroke-width:1.5; marker-end:url(#arrow); }
-  </style>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1180" viewBox="0 0 1000 1180" role="img" aria-labelledby="title desc">
+  <title id="title">WavyPoint Robo navigation flowchart</title>
+  <desc id="desc">Startup initializes hardware and calibrates the compass. The main loop accepts a Bluetooth stop command, waits for GPS updates, smooths position, computes target distance and bearing, updates heading, advances reached waypoints, and otherwise turns or steers toward the target.</desc>
   <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
-      <path d="M0,0 L10,5 L0,10 z" fill="#2b2b2b" />
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#334155"/>
     </marker>
+    <style>
+      .bg{fill:#f8fafc}.box{fill:#fff;stroke:#2563eb;stroke-width:2}.decision{fill:#fffbeb;stroke:#d97706;stroke-width:2}.stop{fill:#fef2f2;stroke:#dc2626;stroke-width:2}.success{fill:#f0fdf4;stroke:#16a34a;stroke-width:2}.line{fill:none;stroke:#334155;stroke-width:2;marker-end:url(#arrow)}.dash{fill:none;stroke:#64748b;stroke-width:2;stroke-dasharray:6 5;marker-end:url(#arrow)}.title{font:700 28px Arial,sans-serif;fill:#0f172a}.label{font:600 17px Arial,sans-serif;fill:#0f172a;text-anchor:middle}.small{font:14px Arial,sans-serif;fill:#334155;text-anchor:middle}.edge{font:600 13px Arial,sans-serif;fill:#475569}.group{font:700 15px Arial,sans-serif;fill:#475569;letter-spacing:1px}
+    </style>
   </defs>
-  <g transform="translate(30,20)" class="col">
-    <text x="0" y="18" class="header">User</text>
-    <rect x="0" y="30" width="220" height="56" rx="8" class="box" />
-    <text x="12" y="54" class="text">Open app / Power robot</text>
-    <text x="12" y="70" class="text">Press: Connect → Record → Start</text>
-  </g>
-  <g transform="translate(330,20)" class="col">
-    <text x="0" y="18" class="header">Control loop</text>
-    <rect x="0" y="30" width="240" height="48" rx="8" class="box" />
-    <text x="12" y="52" class="text">Sensor read → EMA smoothing</text>
-    <rect x="0" y="90" width="240" height="56" rx="8" class="box" />
-    <text x="12" y="114" class="text">Offset learning (GPS when speed&gt;3 km/h)</text>
-    <rect x="0" y="170" width="240" height="56" rx="8" class="box" />
-    <text x="12" y="194" class="text">Heading decision: turn-in-place or proportional steering</text>
-    <rect x="0" y="250" width="240" height="48" rx="8" class="box" />
-    <text x="12" y="272" class="text">Waypoint advance &amp; stop logic</text>
-  </g>
-  <g transform="translate(660,20)" class="col">
-    <text x="0" y="18" class="header">Device / Bridge</text>
-    <rect x="0" y="30" width="200" height="56" rx="8" class="box" />
-    <text x="12" y="54" class="text">Serial bridge (USB / BT)</text>
-    <text x="12" y="70" class="text">PRIZM firmware &amp; motors</text>
-    <rect x="0" y="110" width="200" height="56" rx="8" class="box" />
-    <text x="12" y="134" class="text">GPS module: course &amp; speed</text>
-    <rect x="0" y="190" width="200" height="56" rx="8" class="box" />
-    <text x="12" y="214" class="text">Compass: raw heading</text>
-  </g>
-  <path d="M250 60 L330 60" class="arrow" fill="none" />
-  <path d="M570 72 L660 72" class="arrow" fill="none" />
-  <path d="M570 132 L660 132" class="arrow" fill="none" />
-  <path d="M570 212 L660 212" class="arrow" fill="none" />
-  <g transform="translate(30,300)" class="col">
-    <rect x="0" y="0" width="840" height="54" rx="8" class="box" />
-    <text x="12" y="18" class="header">Telemetry (examples)</text>
-    <text x="12" y="36" class="text">Hdg:045 GPS:042 Off:145 Err:-3 Dist:12.5 — heading, GPS course, offset, error, distance</text>
-  </g>
+  <rect class="bg" width="1000" height="1180" rx="20"/>
+  <text class="title" x="500" y="44" text-anchor="middle">WavyPoint Robo — Actual Firmware Flow</text>
+  <text class="group" x="70" y="88">STARTUP</text>
+
+  <rect class="box" x="300" y="70" width="400" height="60" rx="30"/>
+  <text class="label" x="500" y="106">Power on / reset</text>
+  <path class="line" d="M500 130 V160"/>
+
+  <rect class="box" x="270" y="160" width="460" height="82" rx="10"/>
+  <text class="label" x="500" y="190">Initialize interfaces and PRIZM</text>
+  <text class="small" x="500" y="216">Serial • Bluetooth • GPS • motors • compass</text>
+  <path class="line" d="M500 242 V272"/>
+
+  <path class="decision" d="M500 272 L680 332 L500 392 L320 332 Z"/>
+  <text class="label" x="500" y="327">Compass ready?</text>
+  <text class="small" x="500" y="350">qmc.begin()</text>
+  <path class="line" d="M320 332 H170 V405"/>
+  <text class="edge" x="227" y="322">No</text>
+  <rect class="stop" x="60" y="405" width="220" height="76" rx="10"/>
+  <text class="label" x="170" y="434">Report failure</text>
+  <text class="small" x="170" y="458">“Compass Fail” loop</text>
+  <path class="line" d="M500 392 V420"/>
+  <text class="edge" x="514" y="410">Yes</text>
+
+  <rect class="box" x="270" y="420" width="460" height="84" rx="10"/>
+  <text class="label" x="500" y="451">Manual compass calibration</text>
+  <text class="small" x="500" y="477">Rotate 360° for 8 s; calculate X/Y offsets</text>
+  <path class="line" d="M500 504 V548"/>
+  <text class="group" x="70" y="558">MAIN LOOP</text>
+
+  <path class="decision" d="M500 548 L680 608 L500 668 L320 608 Z"/>
+  <text class="label" x="500" y="603">Bluetooth S received?</text>
+  <text class="small" x="500" y="626">Emergency stop command</text>
+  <path class="line" d="M680 608 H825 V665"/>
+  <text class="edge" x="741" y="597">Yes</text>
+  <rect class="stop" x="730" y="665" width="190" height="76" rx="10"/>
+  <text class="label" x="825" y="694">Stop motors</text>
+  <text class="small" x="825" y="718">Disable navigation</text>
+  <path class="line" d="M500 668 V698"/>
+  <text class="edge" x="514" y="686">No</text>
+
+  <rect class="box" x="270" y="698" width="460" height="76" rx="10"/>
+  <text class="label" x="500" y="728">Decode GPS bytes</text>
+  <text class="small" x="500" y="752">Continue only when location is updated</text>
+  <path class="line" d="M500 774 V800"/>
+
+  <rect class="box" x="270" y="800" width="460" height="94" rx="10"/>
+  <text class="label" x="500" y="831">Calculate navigation state</text>
+  <text class="small" x="500" y="856">EMA position → Haversine distance + target bearing</text>
+  <text class="small" x="500" y="878">Compass heading (+ optional encoder delta) → error</text>
+  <path class="line" d="M500 894 V920"/>
+
+  <path class="decision" d="M500 920 L680 980 L500 1040 L320 980 Z"/>
+  <text class="label" x="500" y="975">Distance &lt; 5 m?</text>
+  <text class="small" x="500" y="998">Waypoint arrival threshold</text>
+
+  <path class="line" d="M320 980 H185 V1050"/>
+  <text class="edge" x="240" y="969">Yes</text>
+  <rect class="success" x="65" y="1050" width="240" height="82" rx="10"/>
+  <text class="label" x="185" y="1079">Stop and advance</text>
+  <text class="small" x="185" y="1103">Or finish after final waypoint</text>
+
+  <path class="line" d="M680 980 H815 V1050"/>
+  <text class="edge" x="742" y="969">No</text>
+  <rect class="box" x="695" y="1050" width="240" height="82" rx="10"/>
+  <text class="label" x="815" y="1079">Move toward target</text>
+  <text class="small" x="815" y="1103">Turn &gt;25°; else P steering</text>
+
+  <path class="dash" d="M185 1050 V1025 H90 V608 H320"/>
+  <path class="dash" d="M815 1050 V1025 H955 V608 H680"/>
+  <text class="edge" x="95" y="790">Next waypoint</text>
+  <text class="edge" x="856" y="790">Next GPS update</text>
 </svg>

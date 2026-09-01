@@ -1,136 +1,148 @@
-<div align="center">
-
 # WavyPoint Robo
 
-**Autonomous waypoint navigation on PRIZM + Arduino.**
-GPS + compass fusion with automatic boresight offset learning, Haversine-based distance tracking, and live Bluetooth telemetry.
+Autonomous GPS waypoint navigation for a differential-drive robot built with a PRIZM controller, QMC5883P compass, u-blox GPS, and HC-05 Bluetooth module.
 
-[![Platform](https://img.shields.io/badge/platform-PRIZM%20%2F%20Arduino-1D9E75.svg)](#hardware)
-[![Status](https://img.shields.io/badge/status-active-9FE1CB.svg)](#roadmap)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-EF9F27.svg)](CONTRIBUTING.md)
+The firmware smooths GPS fixes, calculates the distance and bearing to each waypoint, and uses compass feedback to turn or steer toward the target. It advances through the waypoint list automatically and streams status over Bluetooth.
 
-</div>
+## Robot build
 
----
-
-A robot that drives itself between GPS coordinates and corrects its own compass error while it moves — no manual calibration step, no external IMU. It learns its sensor's mounting offset from the GPS ground-truth heading in real time, then runs a hybrid turn-in-place / proportional steering loop to track each waypoint and advance automatically.
-
-```
-Hdg:045 GPS:042 Off:145 Err:-3 Dist:12.5m  Wp:1/3
-Hdg:047 GPS:043 Off:144 Err:-1 Dist:10.1m  Wp:1/3
-Hdg:049 GPS:049 Off:143 Err:+1 Dist:7.2m   Wp:1/3
-Hdg:050 GPS:050 Off:143 Err:0  Dist:5.8m   Wp:1/3
-→ Waypoint 1 reached. Advancing...
-```
-*Live telemetry streamed over Bluetooth — every field explained in [Telemetry](#telemetry).*
-
-## Why this exists
-
-Most hobby GPS-nav builds either skip compass calibration entirely (heading drifts within minutes) or require a manual figure-eight calibration ritual before every run. WavyPoint Robo does neither — it cross-references the compass against GPS course while the robot is in motion above 3 km/h, and continuously corrects its boresight offset on the fly. The result is a heading estimate that gets *more* accurate the longer it runs, with zero setup steps.
-
-It's also small enough to read end-to-end in one sitting and built on parts you can source from a single electronics order — useful as a reference implementation for anyone teaching or learning sensor fusion, control loops, or embedded navigation.
+<table>
+  <tr>
+    <td align="center"><img src="assets/robot-top-view.png" alt="Top view of the assembled WavyPoint Robo" width="420"></td>
+    <td align="center"><img src="assets/robot-front-view.png" alt="Front perspective of the assembled WavyPoint Robo" width="420"></td>
+  </tr>
+  <tr>
+    <td align="center"><em>Top view</em></td>
+    <td align="center"><em>Front perspective</em></td>
+  </tr>
+</table>
 
 ## Features
 
-- **Waypoint autonomy** — Haversine great-circle distance, automatic advance on arrival
-- **Self-correcting heading** — boresight offset learned continuously from GPS course, no calibration step
-- **GPS smoothing** — exponential moving average filters noisy fixes before they reach the control loop
-- **Hybrid steering** — turn-in-place when heading error is large, proportional correction when on-course
-- **Live telemetry** — full state streamed over Bluetooth at run time for debugging and demos
+- Haversine distance and initial-bearing calculations
+- Exponential smoothing for noisy GPS positions
+- Eight-second hard-iron compass calibration at startup
+- Turn-in-place and proportional forward steering modes
+- Optional encoder-assisted heading between compass samples
+- Bluetooth telemetry and emergency stop command
+- Automatic waypoint advance and final stop
 
-## Architecture
+## Navigation flow
 
-```
-Sensor read ──▶ EMA smoothing ──▶ Offset learning ──▶ Heading control ──▶ Waypoint advance
-(QMC5883P,        (GPS + heading      (GPS course           (turn-in-place /     (Haversine
- UBLOX GPS)         filter)             @ > 3 km/h)            proportional)        distance)
-```
+![WavyPoint Robo navigation flowchart](assets/flowchart.svg)
 
-See [`assets/flowchart.svg`](assets/flowchart.svg) for the full diagram, or [`docs/flowchart-text.md`](docs/flowchart-text.md) for a text-only walkthrough.
+An accessible step-by-step version is available in [docs/flowchart-text.md](docs/flowchart-text.md).
 
 ## Hardware
 
-| Component | Model | Role |
-|---|---|---|
-| Controller | PRIZM | Motor control + main compute |
-| Compass | QMC5883P | Magnetic heading, with offset learning |
-| GPS | UBLOX | Position, course, speed |
-| Drive | DC motors | Differential drive |
-| Telemetry | HC-05 | Bluetooth serial, 9600 baud |
-| Encoders | *(optional)* | Odometry cross-check |
-
-## Quickstart
-
-```bash
-git clone https://github.com/robocop-20/wavypoint-robo
-cd wavypoint-robo
-```
-
-1. Open `firmware/` in the Arduino IDE
-2. Install libraries via **Sketch → Include Library → Manage Libraries**: PRIZM support, `Adafruit QMC5883P`, `TinyGPSPlus`
-3. Edit the waypoint list in firmware (see [Configuration](#configuration))
-4. Upload to the PRIZM controller and power the robot
-5. Connect over Bluetooth and watch for `Ready. Auto-Align Active.` — navigation starts automatically
-
-## Telemetry
-
-| Field | Meaning |
+| Component | Role |
 |---|---|
-| `Hdg` | Compass heading (0–359°) |
-| `GPS` | GPS course |
-| `Off` | Learned boresight offset |
-| `Err` | Heading error to target |
-| `Dist` | Distance to current waypoint (m) |
-| `Wp` | Current waypoint index / total |
+| PRIZM controller | Main compute and motor control |
+| QMC5883P compass | Robot heading |
+| u-blox GPS | Position fixes |
+| Two DC motors | Differential drive |
+| HC-05 Bluetooth module | Telemetry and stop command at 9600 baud |
+| Motor encoders | Optional heading estimation between compass reads |
+
+### Pin assignments
+
+| Connection | Pins |
+|---|---|
+| HC-05 Bluetooth RX/TX | 2, 9 |
+| GPS RX/TX | 3, 4 |
+| Left/right motors | PRIZM ports 1, 2 |
+| Compass | I2C |
+
+> Verify voltage levels and wiring against the documentation for your exact modules before powering the robot.
+
+## Setup
+
+1. Clone or download this repository.
+2. Open `wavy.c` in the Arduino IDE. If the IDE requires an Arduino sketch layout, copy it to `WavyPointRobo/WavyPointRobo.ino`.
+3. Install the PRIZM, `Adafruit QMC5883P`, and `TinyGPSPlus` libraries. `Wire` and `SoftwareSerial` are included with the Arduino toolchain.
+4. Edit the waypoints and hardware-specific settings described below.
+5. Compile and upload the firmware to the PRIZM-compatible board.
+6. Place the robot in a safe, open area and power it on.
+7. When Bluetooth prints `CALIBRATING: Spin Robot 360 deg NOW!`, rotate the robot through a full circle for eight seconds. Navigation begins after a valid GPS update.
 
 ## Configuration
 
-**GPS baud rate** — match to your module:
-```cpp
-GPS_Serial.begin(9600);
-```
+Edit the constants near the top of [`wavy.c`](wavy.c):
 
-**Compass behavior:**
 ```cpp
-const bool AUTO_LEARN_OFFSET = true;
-const float declinationDeg = -0.6;   // set for your location
-```
+const float COMPASS_OFFSET = 0;
+const bool PURE_COMPASS_MODE = true;
+float declinationDeg = -0.6;
 
-**Navigation tuning:**
-```cpp
 const int CRUISE_SPEED = 50;
-const int TURN_SPEED   = 45;
-const float WHEEL_RADIUS = 0.045;    // meters
-const float WHEEL_BASE   = 0.34;     // meters
+const int TURN_SPEED = 45;
+const int MIN_MOTOR_POWER = 25;
 ```
 
-**Waypoints** (lat, lon):
+Replace the sample coordinates before operating the robot:
+
 ```cpp
 NavPoint waypoints[] = {
   {17.780223, 83.375458},
   {17.780277, 83.375477},
-  {17.780322, 83.375368}
+  {17.780322, 83.375368},
+  {17.780305, 83.375359}
 };
 ```
 
+`PURE_COMPASS_MODE` is enabled by default. Setting it to `false` enables encoder-based heading changes between compass updates; verify encoder direction and wheel geometry first.
+
+## Bluetooth output and control
+
+Typical telemetry:
+
+```text
+Hdg:45 Tgt:42 Err:-3 Dist:12.5
+Reached WP 0
+Done!
+```
+
+| Field | Meaning |
+|---|---|
+| `Hdg` | Current heading in degrees |
+| `Tgt` | Bearing to the active waypoint in degrees |
+| `Err` | Shortest signed turn from current heading to target |
+| `Dist` | Haversine distance to the active waypoint in metres |
+
+Send `S` or `s` over Bluetooth to stop navigation. The current firmware does not provide a resume command; restart the controller to begin again.
+
+## Safety
+
+- Test with the drive wheels raised before the first ground run.
+- Keep a physical power cutoff within reach.
+- Use an open outdoor area with a clear GPS view and no people, traffic, or obstacles.
+- Confirm motor direction, compass orientation, and stop control at low power.
+- Sample coordinates are for demonstration only; replace them with a route you have permission to use.
+
 ## Troubleshooting
 
-| Symptom | Likely cause |
+| Symptom | Check |
 |---|---|
-| Compass heading is wrong/inverted | Check `SENSOR_AXIS_FORWARD` / `SENSOR_AXIS_RIGHT` mapping in firmware |
-| GPS never gets a fix / no updates | Verify baud rate and wiring; confirm outdoor sky view |
-| Offset never converges | Robot must exceed 3 km/h during the learning phase |
-| Robot spins instead of driving straight | Check motor direction/invert settings |
+| `Compass Fail` repeats | I2C wiring, sensor power, address, and library compatibility |
+| No movement after calibration | GPS baud rate, antenna sky view, and whether location updates are arriving |
+| Robot turns the wrong way | Compass orientation, `INVERT_COMPASS`, motor wiring, and right-motor inversion |
+| Robot oscillates around the target heading | Reduce the proportional gain in `executeMovement()` or lower motor power |
+| Arrival triggers too early or late | Adjust the `5.0` metre threshold in `loop()` for GPS accuracy |
+| Encoder-assisted mode drifts | Verify encoder polarity, `TICKS_PER_REV`, wheel radius, and wheel base |
 
-## Roadmap
+## Project structure
 
-- [ ] IMU integration for GPS-denied / indoor operation
-- [ ] Web telemetry dashboard (live map + heading plot)
-- [ ] Multi-waypoint upload over Bluetooth (no reflash required)
-- [ ] Obstacle-aware path planning
-
-Want to take one of these on? See [`CONTRIBUTING.md`](CONTRIBUTING.md).
+```text
+.
+|-- wavy.c                         # Arduino-compatible firmware
+|-- assets/flowchart.svg           # Authoritative navigation diagram
+|-- assets/robot-top-view.png      # Assembled robot, top view
+|-- assets/robot-front-view.png    # Assembled robot, front perspective
+|-- docs/flowchart-text.md         # Accessible diagram walkthrough
+|-- CONTRIBUTING.md
+`-- .github/                       # Issue and pull-request templates
+```
 
 ## Contributing
 
-Issues and PRs are welcome — see [`CONTRIBUTING.md`](CONTRIBUTING.md) for setup and PR guidelines. A short demo clip or screenshot with hardware-related PRs helps a lot.
+Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for the expected test notes and hardware details.

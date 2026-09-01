@@ -1,34 +1,33 @@
-Thank you for contributing to WavyPoint Robo — we want this project to be friendly to beginners and useful to embedded developers. Please read these guidelines before opening a pull request.
+# Contributing
 
-Getting your dev environment
+Thanks for helping improve WavyPoint Robo.
 
-1. Fork the repo and clone your fork.
-2. Open the firmware/ folder in Arduino IDE.
-3. Install any missing libraries via Arduino Library Manager (Adafruit QMC5883P, TinyGPSPlus, PRIZM libs).
+## Before opening a pull request
 
-Branching & PRs
+1. Fork and clone the repository.
+2. Open `wavy.c` in the Arduino IDE, or copy it to an `.ino` sketch if required by your IDE.
+3. Install the PRIZM, Adafruit QMC5883P, and TinyGPSPlus libraries.
+4. Create a focused branch such as `fix/gps-timeout` or `feature/resume-command`.
 
-- Create a descriptive branch: feature/your-feature or fix/short-description
-- Keep PRs small and focused
-- Include a short description, testing steps, and a screenshot/GIF of the change if relevant
+## Code changes
 
-Coding style
+- Keep hardware constants near the top of the firmware and explain non-obvious values.
+- Prefer small functions and descriptive names.
+- Do not commit real private routes or personal location data as sample waypoints.
+- Update the README and flowchart when control flow, telemetry, or setup changes.
 
-- Keep changes clear and documented. Add comments for hardware-specific magic numbers.
-- For C code, prefer clear naming and small functions. Add TODOs with context.
+## Testing
 
-Testing
+In the pull request, state:
 
-- Manually test firmware on a PRIZM device when possible (include steps in the PR description).
-- If adding pure docs or examples, ensure links and code blocks render correctly on GitHub.
+- the board, sensors, GPS, Bluetooth module, motors, and library versions used;
+- whether compilation succeeded and for which board target;
+- the bench and outdoor tests performed;
+- expected and observed behavior;
+- any part that could not be tested on physical hardware.
 
-Issues
+Raise the drive wheels for initial motor testing and include evidence that the Bluetooth stop command works when changing movement logic.
 
-- Before creating an issue, search existing issues and README/Troubleshooting.
-- For bug reports: include hardware used, firmware version (commit), steps to reproduce, and expected vs actual behavior.
+## Issues
 
-License & attribution
-
-- Keep license as-is. By contributing, you agree your contributions follow the repository license.
-
-Thank you — small PRs with clear demos get reviewed fastest.
+Search existing issues first. Bug reports should include the firmware commit, hardware setup, wiring or pin changes, reproduction steps, telemetry output, and expected behavior. Remove precise GPS coordinates if they reveal a private location.
